@@ -3,6 +3,7 @@ import cors from "cors";
 import createdUserRouter from "./app/modules/user/user.route";
 import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
+import cowRouter from "./app/modules/cow/cow.route";
 const app = express();
 const port = 3000;
 
@@ -14,7 +15,8 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-app.use("/api/v1", createdUserRouter);
+app.use("/api/v1/auth", createdUserRouter);
+app.use("/api/v1", cowRouter);
 
 app.use(globalErrorHandler);
 

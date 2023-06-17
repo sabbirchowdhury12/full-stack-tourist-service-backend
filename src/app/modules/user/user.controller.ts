@@ -3,6 +3,7 @@ import { UserService } from "./user.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 
+//create a user
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user } = req.body;
@@ -19,6 +20,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+//get all users
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await UserService.getAllUser();
@@ -33,6 +35,8 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+
+//create a user
 const getSingleUser = async (
   req: Request,
   res: Response,
@@ -53,8 +57,26 @@ const getSingleUser = async (
   }
 };
 
+//delete a user
+const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId: string = req.params.id;
+    const result = await UserService.deleteUser(userId);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User deleted successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const UserController = {
   createUser,
   getAllUsers,
   getSingleUser,
+  deleteUser,
 };

@@ -2,6 +2,7 @@ import ApiError from "../../../errors/ApiError";
 import { IUser } from "./user.interface";
 import User from "./user.model";
 
+//create a user
 const createUser = async (user: IUser): Promise<IUser> => {
   if (user?.role === "buyer") {
     user.income = 0;
@@ -16,6 +17,7 @@ const createUser = async (user: IUser): Promise<IUser> => {
   return createUser;
 };
 
+//get all users
 const getAllUser = async () => {
   const allUser = await User.find({});
   if (!allUser) {
@@ -24,6 +26,7 @@ const getAllUser = async () => {
   return allUser;
 };
 
+//get a user
 const getSingleUser = async (id: string) => {
   const getUser = await User.findById(id);
   if (!getUser) {
@@ -32,8 +35,18 @@ const getSingleUser = async (id: string) => {
   return getUser;
 };
 
+//delete a user
+const deleteUser = async (id: string) => {
+  const result = await User.findByIdAndDelete(id);
+  if (!result) {
+    throw new ApiError(400, "failed to delete a user");
+  }
+  return result;
+};
+
 export const UserService = {
   createUser,
   getAllUser,
   getSingleUser,
+  deleteUser,
 };

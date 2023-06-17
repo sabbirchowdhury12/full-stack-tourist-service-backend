@@ -6,10 +6,12 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   let statusCode = 500;
   let message = "Internal Server Error";
   let errorMessages: IGenericErrorMessage[] = [];
-  console.log(error.errors.name);
-  console.log(error);
-  if (error?.name === "validationError") {
+
+  if (error?.name === "ValidationError") {
     const finalError = handleValidationError(error);
+    statusCode = finalError?.statusCode;
+    message = finalError?.message;
+    errorMessages = finalError?.errorMessages;
   }
 
   res.status(statusCode).json({

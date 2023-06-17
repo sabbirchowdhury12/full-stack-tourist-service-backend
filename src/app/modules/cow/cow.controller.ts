@@ -28,7 +28,7 @@ const getAllCows = async (req: Request, res: Response, next: NextFunction) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Users retrieved successfully",
+      message: "Cows retrieved successfully",
       data: result,
     });
   } catch (error) {
@@ -43,13 +43,30 @@ const getSingleCow = async (
   next: NextFunction
 ) => {
   try {
-    const userId: string = req.params.id;
-    const result = await CowService.getSingleCow(userId);
+    const cowId: string = req.params.id;
+    const result = await CowService.getSingleCow(cowId);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "User retrieved successfully",
+      message: "Cow retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+//get a cow
+const updateCow = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const newCow: {} = req.body;
+    const cowId: string = req.params.id;
+    const result = await CowService.updateCow(cowId, newCow);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Cow updated successfully",
       data: result,
     });
   } catch (error) {
@@ -60,13 +77,13 @@ const getSingleCow = async (
 //delete a cow
 const deleteCow = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId: string = req.params.id;
-    const result = await CowService.deleteCow(userId);
+    const cowId: string = req.params.id;
+    const result = await CowService.deleteCow(cowId);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "User deleted successfully",
+      message: "Cow deleted successfully",
       data: result,
     });
   } catch (error) {
@@ -79,4 +96,5 @@ export const CowController = {
   getAllCows,
   getSingleCow,
   deleteCow,
+  updateCow,
 };

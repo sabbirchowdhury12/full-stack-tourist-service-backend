@@ -35,7 +35,7 @@ const getSingleUser = async (id: string): Promise<IUser> => {
   return getUser;
 };
 
-//get a user
+//update a user
 const updateUser = async (id: string, newUser: {}): Promise<IUser> => {
   const result = await User.findByIdAndUpdate(
     id,

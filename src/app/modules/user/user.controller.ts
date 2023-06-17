@@ -56,6 +56,24 @@ const getSingleUser = async (
     next(error);
   }
 };
+//update a user
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const newUser = req.body;
+    // console.log(phoneNumber, role);
+    const userId: string = req.params.id;
+    const result = await UserService.updateUser(userId, newUser);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 //delete a user
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -79,4 +97,5 @@ export const UserController = {
   getAllUsers,
   getSingleUser,
   deleteUser,
+  updateUser,
 };

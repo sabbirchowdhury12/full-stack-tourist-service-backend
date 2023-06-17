@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import { IGenericErrorMessage } from "../../interfaces/error";
 import handleValidationError from "../../errors/handleValidationError";
+import ApiError from "../../errors/ApiError";
+import config from "../../config";
 
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   let statusCode = 500;
@@ -12,12 +14,34 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     statusCode = finalError?.statusCode;
     message = finalError?.message;
     errorMessages = finalError?.errorMessages;
+  } else if (error instanceof ApiError) {
+    statusCode = error?.statusCode;
+    message = error?.message;
+    errorMessages = error?.message
+      ? [
+          {
+            path: "",
+            message: error?.message,
+          },
+        ]
+      : [];
+  } else if (error instanceof Error) {
+    message = error?.message;
+    errorMessages = error?.message
+      ? [
+          {
+            path: "",
+            message: error?.message,
+          },
+        ]
+      : [];
   }
 
   res.status(statusCode).json({
     status: false,
     message,
     errorMessages,
+    stack: config.node_env !== "production" ? error?.stack : "",
   });
   next();
 };

@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.body;
+    const { user } = req.body;
     const result = await UserService.createUser(user);
 
     sendResponse(res, {

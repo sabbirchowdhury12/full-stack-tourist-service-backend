@@ -5,15 +5,10 @@ import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
 import cowRouter from "./app/modules/cow/cow.route";
 const app = express();
-const port = 3000;
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
 
 app.use("/api/v1/auth", createdUserRouter);
 app.use("/api/v1", cowRouter);
@@ -34,8 +29,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// app.get("/", (req: Request, res: Response) => {
-//   res.send("Hello World!");
-// });
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello World!");
+});
 
 export default app;

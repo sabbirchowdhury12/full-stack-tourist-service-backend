@@ -11,7 +11,7 @@ const createCow = async (req: Request, res: Response, next: NextFunction) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "user created",
+      message: "cow created",
       data: result,
     });
   } catch (error) {

@@ -36,7 +36,7 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-//create a user
+//get a user
 const getSingleUser = async (
   req: Request,
   res: Response,

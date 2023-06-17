@@ -11,7 +11,22 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "user created",
+      message: "Users created successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await UserService.getAllUser();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Users retrieved successfully",
       data: result,
     });
   } catch (error) {
@@ -21,4 +36,5 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 export const UserController = {
   createUser,
+  getAllUsers,
 };

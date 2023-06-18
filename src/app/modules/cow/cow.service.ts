@@ -1,4 +1,7 @@
+import { SortOrder } from "mongoose";
 import ApiError from "../../../errors/ApiError";
+import { paginationHelpers } from "../../../helpers/paginationHelper";
+import { IPaginationOptions } from "../../../interfaces/pagination";
 import { ICows } from "./cow.interface";
 import Cow from "./cow.model";
 
@@ -11,13 +14,40 @@ const createCow = async (cow: ICows): Promise<ICows> => {
   return createCow;
 };
 
+type IGenericResponse<T> = {
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+  data: T;
+};
 //get all cow
-const getAllCows = async (): Promise<ICows[]> => {
-  const allCows = await Cow.find({});
-  if (!allCows) {
+const getAllCows = async (
+  paginationOptions: IPaginationOptions
+): Promise<IGenericResponse<ICows[]>> => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
+
+  const sortConditions: { [key: string]: SortOrder } = {};
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+  const total = await Cow.countDocuments();
+
+  const result = await Cow.find().sort(sortConditions).skip(skip).limit(limit);
+
+  if (!result) {
     throw new ApiError(400, "failed to get all cow");
   }
-  return allCows;
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 //get a cow

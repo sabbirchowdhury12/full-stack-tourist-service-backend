@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import sendResponse from "../../../shared/sendResponse";
 import { NextFunction, Request, Response } from "express";
 import { CowService } from "./cow.service";
+import pick from "../../../shared/pick";
 
 //create a cow
 const createCow = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,7 +24,14 @@ const createCow = async (req: Request, res: Response, next: NextFunction) => {
 //get all cow
 const getAllCows = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await CowService.getAllCows();
+    const paginationOptions = pick(req.query, [
+      "page",
+      "limit",
+      "sortBy",
+      "sortOrder",
+    ]);
+
+    const result = await CowService.getAllCows(paginationOptions);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,

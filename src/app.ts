@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", createdUserRouter);
-app.use("/api/v1", cowRouter);
+app.use("/api/v1/cows", cowRouter);
 
 app.use(globalErrorHandler);
 

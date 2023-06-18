@@ -13,8 +13,8 @@ interface IResponse<T> {
 }
 const sendResponse = <T>(res: Response, data: IResponse<T>) => {
   const responseData: IResponse<T> = {
-    statusCode: data.statusCode,
     success: data.success,
+    statusCode: data.statusCode,
     message: data.message,
     meta: data.meta || null,
     data: data.data || null,

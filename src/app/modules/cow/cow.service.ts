@@ -24,8 +24,21 @@ type IGenericResponse<T> = {
 };
 //get all cow
 const getAllCows = async (
+  filters: any,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<ICows[]>> => {
+  // ------------------------->>>>>>>>>>>>>
+  const { searchTerm } = filters;
+  const andConditions = [
+    {
+      $or: [
+        { location: { $regex: new RegExp(searchTerm.toString(), "i") } },
+        { breed: { $regex: new RegExp(searchTerm.toString(), "i") } },
+        { category: { $regex: new RegExp(searchTerm.toString(), "i") } },
+      ],
+    },
+  ];
+
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
@@ -35,7 +48,10 @@ const getAllCows = async (
   }
   const total = await Cow.countDocuments();
 
-  const result = await Cow.find().sort(sortConditions).skip(skip).limit(limit);
+  const result = await Cow.find({ $and: andConditions })
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
 
   if (!result) {
     throw new ApiError(400, "failed to get all cow");

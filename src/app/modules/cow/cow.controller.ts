@@ -24,6 +24,8 @@ const createCow = async (req: Request, res: Response, next: NextFunction) => {
 //get all cow
 const getAllCows = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const filters = req.query;
+
     const paginationOptions = pick(req.query, [
       "page",
       "limit",
@@ -31,13 +33,14 @@ const getAllCows = async (req: Request, res: Response, next: NextFunction) => {
       "sortOrder",
     ]);
 
-    const result = await CowService.getAllCows(paginationOptions);
+    const result = await CowService.getAllCows(filters, paginationOptions);
 
     sendResponse(res, {
-      statusCode: httpStatus.OK,
       success: true,
+      statusCode: httpStatus.OK,
       message: "Cows retrieved successfully",
-      data: result,
+      meta: result.meta,
+      data: result.data,
     });
   } catch (error) {
     next(error);

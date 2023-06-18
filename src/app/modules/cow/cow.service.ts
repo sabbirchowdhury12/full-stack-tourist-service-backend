@@ -1,8 +1,8 @@
-import { SortOrder } from "mongoose";
+import mongoose, { SortOrder } from "mongoose";
 import ApiError from "../../../errors/ApiError";
 import { paginationHelpers } from "../../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../../interfaces/pagination";
-import { ICows } from "./cow.interface";
+import { ICows, cowModel } from "./cow.interface";
 import Cow from "./cow.model";
 
 //create a cow
@@ -28,16 +28,22 @@ const getAllCows = async (
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<ICows[]>> => {
   // ------------------------->>>>>>>>>>>>>
-  const { searchTerm } = filters;
-  const andConditions = [
-    {
-      $or: [
-        { location: { $regex: new RegExp(searchTerm.toString(), "i") } },
-        { breed: { $regex: new RegExp(searchTerm.toString(), "i") } },
-        { category: { $regex: new RegExp(searchTerm.toString(), "i") } },
-      ],
-    },
-  ];
+
+  const { searchTerm, minPrice, maxPrice, location } = filters;
+
+  const searchQuery = searchTerm ? String(searchTerm) : "";
+
+  const filter: any = {};
+  if (minPrice) filter.price = { $gte: parseInt(minPrice as string, 10) };
+  if (maxPrice)
+    filter.price = { ...filter.price, $lte: parseInt(maxPrice as string, 10) };
+  if (location) filter.location = location as string;
+
+  filter.price = {
+    ...filter.price,
+    $gt: minPrice,
+    $lt: maxPrice,
+  };
 
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
@@ -48,7 +54,18 @@ const getAllCows = async (
   }
   const total = await Cow.countDocuments();
 
-  const result = await Cow.find({ $and: andConditions })
+  const result = await Cow.find({
+    $or: [
+      {
+        $or: [
+          { location: { $regex: searchQuery, $options: "i" } },
+          { breed: { $regex: searchQuery, $options: "i" } },
+          { category: { $regex: searchQuery, $options: "i" } },
+        ],
+      },
+      filter,
+    ],
+  })
     .sort(sortConditions)
     .skip(skip)
     .limit(limit);

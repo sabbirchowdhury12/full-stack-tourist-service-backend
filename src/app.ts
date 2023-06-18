@@ -4,6 +4,7 @@ import createdUserRouter from "./app/modules/user/user.route";
 import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
 import cowRouter from "./app/modules/cow/cow.route";
+import orderRoute from "./app/modules/order/order.route";
 const app = express();
 
 app.use(cors());
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", createdUserRouter);
 app.use("/api/v1/cows", cowRouter);
+app.use("/api/v1/orders", orderRoute);
 
 app.use(globalErrorHandler);
 

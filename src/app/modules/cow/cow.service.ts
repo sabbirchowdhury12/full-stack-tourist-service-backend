@@ -27,8 +27,6 @@ const getAllCows = async (
   filters: any,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<ICows[]>> => {
-  // ------------------------->>>>>>>>>>>>>
-
   const { searchTerm, minPrice, maxPrice, location } = filters;
 
   const searchQuery = searchTerm ? String(searchTerm) : "";

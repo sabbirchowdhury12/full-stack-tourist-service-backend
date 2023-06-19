@@ -41,6 +41,12 @@ const createOrder = async ({ cow, buyer }: IOrder): Promise<IOrder> => {
   }
 };
 
+const getAllOrder = async (): Promise<IOrder[]> => {
+  const order = await Order.find({});
+  return order;
+};
+
 export const OrderService = {
   createOrder,
+  getAllOrder,
 };

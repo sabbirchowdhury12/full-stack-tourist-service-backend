@@ -7,7 +7,7 @@ import pick from "../../../shared/pick";
 //create a cow
 const createCow = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { cow } = req.body;
+    const cow = req.body;
     const result = await CowService.createCow(cow);
 
     sendResponse(res, {

@@ -17,6 +17,10 @@ app.use("/api/v1/orders", orderRoute);
 
 app.use(globalErrorHandler);
 
+app.get("/", async (req: Request, res: Response) => {
+  res.send("Hello World!");
+});
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(httpStatus.NOT_FOUND).json({
     success: false,
@@ -29,10 +33,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     ],
   });
   next();
-});
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
 });
 
 export default app;

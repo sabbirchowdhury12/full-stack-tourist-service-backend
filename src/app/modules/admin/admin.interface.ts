@@ -1,9 +1,9 @@
 import { Model } from "mongoose";
 
-export type IUser = {
+export type IAdmin = {
   phoneNumber: string;
-  role: "seller" | "buyer";
-  password: string;
+  role: "admin";
+  password?: string;
   name: {
     firstName: string;
     lastName: string;
@@ -13,4 +13,4 @@ export type IUser = {
   income?: number;
 };
 
-export type userModel = Model<IUser>;
+export type adminModel = Model<IAdmin>;

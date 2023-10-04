@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import { IUser, userModel } from "./user.interface";
+import { IAdmin, adminModel } from "./admin.interface";
 
-const userSchema = new Schema<IUser>(
+const adminSchema = new Schema<IAdmin>(
   {
     phoneNumber: {
       type: String,
@@ -10,7 +10,6 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["seller", "buyer"],
       required: true,
     },
     password: {
@@ -43,6 +42,6 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-const User = model<IUser, userModel>("Users", userSchema);
+const User = model<IAdmin, adminModel>("admin", adminSchema);
 
 export default User;

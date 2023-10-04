@@ -2,6 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { UserService } from "./user.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
+import config from "../../../config";
 
 //create a user
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -92,10 +93,37 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = req.body;
+
+    const result = await UserService.login(user);
+
+    /// set refresh token in cookie
+    const cookieOptions = {
+      secure: config.node_env === "production",
+      httpOnly: true,
+    };
+    res.cookie("refreshToken", result.refreshToken, cookieOptions);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User logged in successfully",
+      data: {
+        accessToken: result.accessToken,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const UserController = {
   createUser,
   getAllUsers,
   getSingleUser,
   deleteUser,
   updateUser,
+  login,
 };

@@ -1,6 +1,9 @@
+import jwt, { Secret } from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import ApiError from "../../../errors/ApiError";
 import { IUser } from "./user.interface";
 import User from "./user.model";
+import config from "../../../config";
 
 //create a user
 const createUser = async (user: IUser): Promise<IUser> => {
@@ -10,6 +13,12 @@ const createUser = async (user: IUser): Promise<IUser> => {
   if (user?.role === "seller") {
     user.budget = 0;
   }
+
+  if (user?.password) {
+    const hashPassword = await bcrypt.hash(user.password, 10);
+    user.password = hashPassword;
+  }
+
   const createUser = await User.create(user);
   if (!createUser) {
     throw new ApiError(400, "failed to  create a user");
@@ -57,10 +66,50 @@ const deleteUser = async (id: string): Promise<IUser> => {
   return result;
 };
 
+const login = async (payload: { phoneNumber: string; password: string }) => {
+  const { phoneNumber, password } = payload;
+
+  const user = await User.findOne({ phoneNumber });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (!user.password) {
+    throw new Error("user password is missing");
+  }
+
+  const passwordValidation = await bcrypt.compare(password, user.password);
+
+  if (!passwordValidation) {
+    throw new Error(" password is wrong");
+  }
+
+  const accessToken = jwt.sign(
+    {
+      id: user._id,
+      role: user.role,
+    },
+    config.jwt_secret_key as Secret,
+    { expiresIn: "1d" }
+  );
+
+  const refreshToken = jwt.sign(
+    {
+      id: user._id,
+      role: user.role,
+    },
+    config.jwt_refresh_key as Secret,
+    { expiresIn: "365d" }
+  );
+
+  return { accessToken, refreshToken };
+};
+
 export const UserService = {
   createUser,
   getAllUser,
   getSingleUser,
   deleteUser,
   updateUser,
+  login,
 };

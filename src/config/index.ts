@@ -7,4 +7,6 @@ export default {
   database_url: process.env.MONGOOSE_URL,
   port: process.env.PORT,
   node_env: process.env.NODE_ENV,
+  jwt_secret_key: process.env.JWT_SECRET_KEY,
+  jwt_refresh_key: process.env.JWT_REFRESH_SECRET_KEY,
 };

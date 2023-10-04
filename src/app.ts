@@ -6,11 +6,13 @@ import httpStatus from "http-status";
 import cowRouter from "./app/modules/cow/cow.route";
 import orderRoute from "./app/modules/order/order.route";
 import { adminRoute } from "./app/modules/admin/admin.route";
+import cookieParser from "cookie-parser";
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use("/api/v1", createdUserRouter);
 app.use("/api/v1/cows", cowRouter);

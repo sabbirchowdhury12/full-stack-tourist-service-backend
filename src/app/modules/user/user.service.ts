@@ -1,9 +1,10 @@
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { Secret, verify } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import ApiError from "../../../errors/ApiError";
 import { IUser } from "./user.interface";
 import User from "./user.model";
 import config from "../../../config";
+import httpStatus from "http-status";
 
 //create a user
 const createUser = async (user: IUser): Promise<IUser> => {
@@ -105,6 +106,47 @@ const login = async (payload: { phoneNumber: string; password: string }) => {
   return { accessToken, refreshToken };
 };
 
+interface JwtPayload {
+  id: string;
+  role: string;
+}
+
+const refreshToken = async (token: string) => {
+  let verifiedToken: JwtPayload | null = null; // Use the JwtPayload interface
+
+  try {
+    const decodedToken = jwt.verify(token, config.jwt_refresh_key as Secret);
+    if (typeof decodedToken === "object") {
+      verifiedToken = decodedToken as JwtPayload;
+    }
+  } catch (err) {
+    throw new ApiError(httpStatus.FORBIDDEN, "Invalid refresh token");
+  }
+
+  if (!verifiedToken) {
+    throw new ApiError(httpStatus.FORBIDDEN, "Invalid refresh token");
+  }
+
+  const { id } = verifiedToken;
+
+  const isUserExist = await User.findById(id);
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "user doed not exist");
+  }
+
+  const newAccessToken = jwt.sign(
+    {
+      id: isUserExist?._id,
+      role: isUserExist?.role,
+    },
+    config.jwt_secret_key as Secret,
+    { expiresIn: "365d" }
+  );
+
+  return {
+    accessToken: newAccessToken,
+  };
+};
 export const UserService = {
   createUser,
   getAllUser,
@@ -112,4 +154,5 @@ export const UserService = {
   deleteUser,
   updateUser,
   login,
+  refreshToken,
 };

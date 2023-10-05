@@ -119,6 +119,34 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    const result = await UserService.refreshToken(refreshToken);
+
+    /// set refresh token in cookie
+    const cookieOptions = {
+      secure: config.node_env === "production",
+      httpOnly: true,
+    };
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User logged in successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const UserController = {
   createUser,
   getAllUsers,
@@ -126,4 +154,5 @@ export const UserController = {
   deleteUser,
   updateUser,
   login,
+  refreshToken,
 };

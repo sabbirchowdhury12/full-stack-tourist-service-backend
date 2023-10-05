@@ -20,7 +20,15 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
 };
 const getAllOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await OrderService.getAllOrder();
+    const user = req.user;
+    let userInfo;
+    if (user) {
+      userInfo = {
+        id: user.id,
+        role: user.role,
+      };
+    }
+    const result = await OrderService.getAllOrder(userInfo);
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

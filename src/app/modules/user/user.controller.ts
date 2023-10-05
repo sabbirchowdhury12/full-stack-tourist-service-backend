@@ -139,7 +139,7 @@ const refreshToken = async (
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "User logged in successfully",
+      message: "New access token generated successfully !",
       data: result,
     });
   } catch (error) {

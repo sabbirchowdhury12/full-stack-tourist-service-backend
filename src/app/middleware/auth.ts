@@ -3,11 +3,13 @@ import { NextFunction, Request, Response } from "express";
 import ApiError from "../../errors/ApiError";
 import httpStatus from "http-status";
 import config from "../../config";
-import { ENUM_USER_ROLE } from "../../enums/user";
 
-interface CustomJwtPayload extends JwtPayload {
-  id: string;
-  role: ENUM_USER_ROLE;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
+    }
+  }
 }
 
 const auth =
@@ -18,22 +20,19 @@ const auth =
       if (!token) {
         throw new ApiError(
           httpStatus.UNAUTHORIZED,
-          "You are not Authorized, sent a token by 'authorization' in headers"
+          "You are not Authorized, send a token via 'authorization' in headers"
         );
       }
 
-      let verifiedUser: CustomJwtPayload | null = null;
-
-      verifiedUser = jwt.verify(
+      const verifiedUser = jwt.verify(
         token,
         config.jwt_secret_key as Secret
-      ) as CustomJwtPayload;
+      ) as JwtPayload;
+      req.user = verifiedUser;
 
       if (!verifiedUser) {
         throw new ApiError(httpStatus.FORBIDDEN, "Invalid token");
       }
-
-      // req.user = verifiedUser;
 
       if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
         throw new ApiError(httpStatus.FORBIDDEN, "Forbidden");

@@ -4,9 +4,11 @@ import { paginationHelpers } from "../../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import { ICows, cowModel } from "./cow.interface";
 import Cow from "./cow.model";
+import httpStatus, { SEE_OTHER } from "http-status";
 
 //create a cow
-const createCow = async (cow: ICows): Promise<ICows> => {
+const createCow = async (cow: ICows, id: string): Promise<ICows> => {
+  cow.seller = id;
   const createCow = await Cow.create(cow);
   if (!createCow) {
     throw new ApiError(400, "failed to create");
@@ -91,7 +93,19 @@ const getSingleCow = async (id: string): Promise<ICows> => {
 };
 
 //update a cow
-const updateCow = async (id: string, newCow: {}): Promise<ICows> => {
+const updateCow = async (
+  id: string,
+  newCow: {},
+  sellerId: string
+): Promise<ICows> => {
+  const findCow = await Cow.findById(id);
+  if (findCow && findCow.seller != sellerId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "you have no access to delete this cow"
+    );
+  }
+
   const result = await Cow.findByIdAndUpdate(id, { ...newCow }, { new: true });
   if (!result) {
     throw new ApiError(400, "failed to update a cow");
@@ -99,7 +113,15 @@ const updateCow = async (id: string, newCow: {}): Promise<ICows> => {
   return result;
 };
 //delete a cow
-const deleteCow = async (id: string): Promise<ICows> => {
+const deleteCow = async (id: string, sellerId: string): Promise<ICows> => {
+  const findCow = await Cow.findById(id);
+  if (findCow && findCow.seller != sellerId) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "you have no access to delete this cow"
+    );
+  }
+
   const result = await Cow.findByIdAndDelete(id);
   if (!result) {
     throw new ApiError(400, "failed to delete a cow");

@@ -41,9 +41,43 @@ const createOrder = async ({ cow, buyer }: IOrder): Promise<IOrder> => {
   }
 };
 
-const getAllOrder = async (): Promise<IOrder[]> => {
-  const order = await Order.find({});
-  return order;
+// const getAllOrder = async (userInfo: any): Promise<IOrder[] | null> => {
+//   if (userInfo?.role == "buyer" && userInfo?.role == "seller") {
+//     const orders = await Order.find({ buyer: userInfo.id });
+//     console.log(orders);
+//     return orders;
+//   } else {
+//     return null;
+//   }
+// };
+
+const getAllOrder = async (userInfo: any) => {
+  const orders = await Order.find({});
+
+  if (userInfo?.role == "buyer") {
+    const orders = await Order.find({ buyer: userInfo.id });
+    console.log(orders);
+    return orders;
+  } else if (userInfo?.role == "seller") {
+    const filteredOrders = await Promise.all(
+      orders.map(async (order) => {
+        const cow = await Cow.findById(order.cow);
+        if (cow && cow.seller == userInfo.id) {
+          return order;
+        }
+        return null; // Return null for orders that don't match the criteria
+      })
+    );
+
+    // Remove null values from the filteredOrders array
+    const validOrders = filteredOrders.filter((order) => order !== null);
+
+    return validOrders;
+  } else if (userInfo?.role == "admin") {
+    return orders;
+  } else {
+    return null;
+  }
 };
 
 export const OrderService = {

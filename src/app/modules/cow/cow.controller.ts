@@ -3,12 +3,21 @@ import sendResponse from "../../../shared/sendResponse";
 import { NextFunction, Request, Response } from "express";
 import { CowService } from "./cow.service";
 import pick from "../../../shared/pick";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import config from "../../../config";
+import { AuthorizedUser } from "../../../interfaces/user";
 
 //create a cow
 const createCow = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const cow = req.body;
-    const result = await CowService.createCow(cow);
+    const user = req.user;
+    let id;
+    if (user) {
+      id = user.id;
+    }
+
+    const result = await CowService.createCow(cow, id);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -72,7 +81,12 @@ const updateCow = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const newCow: {} = req.body;
     const cowId: string = req.params.id;
-    const result = await CowService.updateCow(cowId, newCow);
+    const user = req.user;
+    let id;
+    if (user) {
+      id = user.id;
+    }
+    const result = await CowService.updateCow(cowId, newCow, id);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -89,7 +103,12 @@ const updateCow = async (req: Request, res: Response, next: NextFunction) => {
 const deleteCow = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const cowId: string = req.params.id;
-    const result = await CowService.deleteCow(cowId);
+    const user = req.user;
+    let id;
+    if (user) {
+      id = user.id;
+    }
+    const result = await CowService.deleteCow(cowId, id);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,

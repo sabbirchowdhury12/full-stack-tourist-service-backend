@@ -11,15 +11,32 @@
     - https://cow-hut-backend-seven.vercel.app/api/v1/admins/create-admin (POST)
     - https://cow-hut-backend-seven.vercel.app/api/v1/admins/login (POST)
 
-#### User
+#### orders
+
+    - https://cow-hut-backend-seven.vercel.app/api/v1/orders (POST)
+    - https://cow-hut-backend-seven.vercel.app/api/v1/orders (GET)
+
+## Bonus Part
+
+### My Profile
+
+    - https://cow-hut-backend-seven.vercel.app/api/v1/users/my-profile (GET)
+    - https://cow-hut-backend-seven.vercel.app/api/v1/users/my-profile (PATCH)
+
+### Order
+
+    - https://cow-hut-backend-seven.vercel.app/api/v1/orders/652004f77bf96deaf20b8181 (GET)
+    -
+
+### User
 
     - https://cow-hut-backend-seven.vercel.app/api/v1/auth/signup (POST) - create a user
     - https://cow-hut-backend-seven.vercel.app/api/v1/users (GET)- get all  users
-    - https://cow-hut-backend-seven.vercel.app/api/v1/users/651f1d86f288eba197723447 (GET) - get a user
-    - https://cow-hut-backend-seven.vercel.app/api/v1/users/651f1d86f288eba197723447 (PATCH) - update a user
-    - https://cow-hut-backend-seven.vercel.app/api/v1/users/651f1d86f288eba197723447 (DELETE) - delete a user
+    - https://cow-hut-backend-seven.vercel.app/api/v1/users/651fd527a49c107255628d82 (GET) - get a user
+    - https://cow-hut-backend-seven.vercel.app/api/v1/users/651fd527a49c107255628d82 (PATCH) - update a user
+    - https://cow-hut-backend-seven.vercel.app/api/v1/users/651fd527a49c107255628d82 (DELETE) - delete a user
 
-#### Cow
+### Cow
 
     - https://cow-hut-backend-seven.vercel.app/api/v1/cows (POST) - create a cow
     - https://cow-hut-backend-seven.vercel.app/api/v1/cows (GET)- get all  cow

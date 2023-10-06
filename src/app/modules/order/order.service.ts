@@ -86,7 +86,7 @@ const getSingleOrder = async (id: string, user: any) => {
   if (!order) {
     throw new ApiError(400, "failed to get a cow");
   }
-  console.log(order);
+
   if (user.role == "buyer" && order?.buyer != user.id) {
     throw new ApiError(400, "you can not access");
   }
@@ -97,8 +97,8 @@ const getSingleOrder = async (id: string, user: any) => {
     throw new ApiError(400, "you can not access");
   }
 
-  const seller = await Cow.findById(cow?.seller);
-
+  const seller = await User.findById(cow?.seller);
+  console.log(seller);
   const buyer = await User.findById(order?.buyer);
 
   return { cow, seller, buyer };

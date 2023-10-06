@@ -13,6 +13,16 @@ const insertIntoDB = async (data: User): Promise<Omit<User, "password">> => {
   const { password, ...others } = result;
   return others;
 };
+const getAllFromDB = async (): Promise<Omit<User, "password">[]> => {
+  const result = await prisma.user.findMany({});
+
+  const usersWithoutPassword = result.map((user) => {
+    const { password, ...others } = user;
+    return others;
+  });
+
+  return usersWithoutPassword;
+};
 const userLogin = async (email: string, password: string): Promise<string> => {
   const user = await prisma.user.findUnique({
     where: {
@@ -47,4 +57,5 @@ const userLogin = async (email: string, password: string): Promise<string> => {
 export const UserService = {
   insertIntoDB,
   userLogin,
+  getAllFromDB,
 };

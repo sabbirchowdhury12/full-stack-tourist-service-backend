@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1/auth", UserRouter);
+app.use("/api/v1", UserRouter);
 // app.use("/api/v1/cows", cowRouter);
 // app.use("/api/v1/orders", orderRoute);
 // app.use("/api/v1/admins", adminRoute);

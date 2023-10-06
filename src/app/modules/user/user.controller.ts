@@ -18,6 +18,24 @@ const insertToDB = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+const getAllFromDB = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = await UserService.getAllFromDB();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Users retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
@@ -36,5 +54,6 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
 
 export const UserController = {
   insertToDB,
+  getAllFromDB,
   userLogin,
 };

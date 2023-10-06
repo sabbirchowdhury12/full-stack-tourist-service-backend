@@ -36,6 +36,65 @@ const getAllFromDB = async (
     next(error);
   }
 };
+const getSingleFromDB = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const result = await UserService.getSingleFromDB(id);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User getched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const updateOneToDB = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    const result = await UserService.updateOneToDB(id, data);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteOneFromDB = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const result = await UserService.deleteOneFromDB(id);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Uers deleted successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
@@ -56,4 +115,7 @@ export const UserController = {
   insertToDB,
   getAllFromDB,
   userLogin,
+  getSingleFromDB,
+  updateOneToDB,
+  deleteOneFromDB,
 };

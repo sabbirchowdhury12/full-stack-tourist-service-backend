@@ -23,6 +23,53 @@ const getAllFromDB = async (): Promise<Omit<User, "password">[]> => {
 
   return usersWithoutPassword;
 };
+const getSingleFromDB = async (id: string): Promise<Omit<User, "password">> => {
+  const result = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, "user not found");
+  }
+
+  const { password, ...others } = result;
+  return others;
+};
+const updateOneToDB = async (
+  id: string,
+  data: User
+): Promise<Omit<User, "password">> => {
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data,
+  });
+
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, "user not found");
+  }
+
+  const { password, ...others } = result;
+  return others;
+};
+
+const deleteOneFromDB = async (id: string): Promise<Omit<User, "password">> => {
+  const result = await prisma.user.delete({
+    where: {
+      id,
+    },
+  });
+
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, "user not found");
+  }
+
+  const { password, ...others } = result;
+  return others;
+};
 const userLogin = async (email: string, password: string): Promise<string> => {
   const user = await prisma.user.findUnique({
     where: {
@@ -58,4 +105,7 @@ export const UserService = {
   insertIntoDB,
   userLogin,
   getAllFromDB,
+  getSingleFromDB,
+  updateOneToDB,
+  deleteOneFromDB,
 };

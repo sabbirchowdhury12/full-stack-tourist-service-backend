@@ -40,7 +40,29 @@ const getAllOrder = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getSingleOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const orderId: string = req.params.id;
+    const user = req.user;
+
+    const result = await OrderService.getSingleOrder(orderId, user);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Order information retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const OrderController = {
   createOrder,
   getAllOrder,
+  getSingleOrder,
 };

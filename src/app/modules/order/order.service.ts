@@ -80,7 +80,32 @@ const getAllOrder = async (userInfo: any) => {
   }
 };
 
+const getSingleOrder = async (id: string, user: any) => {
+  console.log(user);
+  const order = await Order.findById(id);
+  if (!order) {
+    throw new ApiError(400, "failed to get a cow");
+  }
+  console.log(order);
+  if (user.role == "buyer" && order?.buyer != user.id) {
+    throw new ApiError(400, "you can not access");
+  }
+
+  const cow = await Cow.findById(order?.cow);
+
+  if (user.role == "seller" && cow?.seller != user.id) {
+    throw new ApiError(400, "you can not access");
+  }
+
+  const seller = await Cow.findById(cow?.seller);
+
+  const buyer = await User.findById(order?.buyer);
+
+  return { cow, seller, buyer };
+};
+
 export const OrderService = {
   createOrder,
   getAllOrder,
+  getSingleOrder,
 };

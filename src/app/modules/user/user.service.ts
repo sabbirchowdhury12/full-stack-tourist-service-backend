@@ -147,12 +147,43 @@ const refreshToken = async (token: string) => {
     accessToken: newAccessToken,
   };
 };
+
+const getProfile = async (id: string): Promise<IUser> => {
+  const getUser = await User.findById(id);
+  if (!getUser) {
+    throw new ApiError(400, "failed to get a user");
+  }
+  return getUser;
+};
+
+const updateProfile = async (id: string, newUser: IUser): Promise<IUser> => {
+  if (newUser && newUser?.password) {
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
+  }
+  const result = await User.findByIdAndUpdate(
+    id,
+    { ...newUser },
+    { new: true }
+  );
+  if (!result) {
+    throw new ApiError(400, "failed to update a user");
+  }
+
+  const sanitizedResult = result.toObject();
+  delete sanitizedResult.password;
+
+  return sanitizedResult;
+};
+
 export const UserService = {
   createUser,
   getAllUser,
   getSingleUser,
   deleteUser,
   updateUser,
+  getProfile,
   login,
   refreshToken,
+  updateProfile,
 };

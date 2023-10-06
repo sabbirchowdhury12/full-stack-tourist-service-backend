@@ -3,7 +3,7 @@ import { Model } from "mongoose";
 export type IUser = {
   phoneNumber: string;
   role: "seller" | "buyer";
-  password: string;
+  password?: string;
   name: {
     firstName: string;
     lastName: string;

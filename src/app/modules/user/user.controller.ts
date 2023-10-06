@@ -147,12 +147,61 @@ const refreshToken = async (
   }
 };
 
+const getProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = req.user;
+    let id;
+    if (user) {
+      id = user.id;
+    }
+
+    const result = await UserService.getProfile(id);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User's information retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const newUser = req.body;
+
+    const user = req.user;
+    let id;
+    if (user) {
+      id = user.id;
+    }
+    const result = await UserService.updateProfile(id, newUser);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const UserController = {
   createUser,
   getAllUsers,
   getSingleUser,
   deleteUser,
   updateUser,
+  getProfile,
   login,
   refreshToken,
+  updateProfile,
 };

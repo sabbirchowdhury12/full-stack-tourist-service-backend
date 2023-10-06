@@ -1,23 +1,21 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import createdUserRouter from "./app/modules/user/user.route";
+
 import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
-import cowRouter from "./app/modules/cow/cow.route";
-import orderRoute from "./app/modules/order/order.route";
-import { adminRoute } from "./app/modules/admin/admin.route";
+
 import cookieParser from "cookie-parser";
+import { UserRouter } from "./app/modules/user/user.route";
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
-app.use("/api/v1", createdUserRouter);
-app.use("/api/v1/cows", cowRouter);
-app.use("/api/v1/orders", orderRoute);
-app.use("/api/v1/admins", adminRoute);
+app.use("/api/v1/auth", UserRouter);
+// app.use("/api/v1/cows", cowRouter);
+// app.use("/api/v1/orders", orderRoute);
+// app.use("/api/v1/admins", adminRoute);
 
 app.use(globalErrorHandler);
 

@@ -1,14 +1,12 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { UserService } from "./user.service";
-import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
-import config from "../../../config";
+import sendResponse from "../../../shared/sendResponse";
+import { UserService } from "./user.service";
+import { NextFunction, Request, Response } from "express";
 
-//create a user
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
+const insertToDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.body;
-    const result = await UserService.createUser(user);
+    const result = await UserService.insertIntoDB(user);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -20,173 +18,15 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
-
-//get all users
-const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await UserService.getAllUser();
+    const { email, password } = req.body;
+    const result = await UserService.userLogin(email, password);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Users retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-//get a user
-const getSingleUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId: string = req.params.id;
-    const result = await UserService.getSingleUser(userId);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-//update a user
-const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const newUser = req.body;
-    // console.log(phoneNumber, role);
-    const userId: string = req.params.id;
-    const result = await UserService.updateUser(userId, newUser);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User updated successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-//delete a user
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId: string = req.params.id;
-    const result = await UserService.deleteUser(userId);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User deleted successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const login = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user = req.body;
-
-    const result = await UserService.login(user);
-
-    /// set refresh token in cookie
-    const cookieOptions = {
-      secure: config.node_env === "production",
-      httpOnly: true,
-    };
-    res.cookie("refreshToken", result.refreshToken, cookieOptions);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User logged in successfully",
-      data: {
-        accessToken: result.accessToken,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const refreshToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { refreshToken } = req.cookies;
-
-    const result = await UserService.refreshToken(refreshToken);
-
-    /// set refresh token in cookie
-    const cookieOptions = {
-      secure: config.node_env === "production",
-      httpOnly: true,
-    };
-    res.cookie("refreshToken", refreshToken, cookieOptions);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "New access token generated successfully !",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getProfile = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user = req.user;
-    let id;
-    if (user) {
-      id = user.id;
-    }
-
-    const result = await UserService.getProfile(id);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User's information retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const updateProfile = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const newUser = req.body;
-
-    const user = req.user;
-    let id;
-    if (user) {
-      id = user.id;
-    }
-    const result = await UserService.updateProfile(id, newUser);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User updated successfully",
+      message: "User signin successfully!",
       data: result,
     });
   } catch (error) {
@@ -195,13 +35,6 @@ const updateProfile = async (
 };
 
 export const UserController = {
-  createUser,
-  getAllUsers,
-  getSingleUser,
-  deleteUser,
-  updateUser,
-  getProfile,
-  login,
-  refreshToken,
-  updateProfile,
+  insertToDB,
+  userLogin,
 };

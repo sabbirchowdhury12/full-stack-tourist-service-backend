@@ -39,27 +39,29 @@ const getAllFromDB = async (
     next(error);
   }
 };
-//   const getSingleFromDB = async (
-//     req: Request,
-//     res: Response,
-//     next: NextFunction
-//   ) => {
-//     try {
-//       const id = req.params.id;
-//       const result = await BookService.getSingleFromDB(id);
+const getSingleFromDB = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.orderId;
+    const userInfo = req.user;
+    const result = await OrderService.getSingleFromDB(id, userInfo);
 
-//       sendResponse(res, {
-//         statusCode: httpStatus.OK,
-//         success: true,
-//         message: "Book fetched successfully",
-//         data: result,
-//       });
-//     } catch (error) {
-//       next(error);
-//     }
-//   };
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Book fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const OrderController = {
   insertToDB,
   getAllFromDB,
+  getSingleFromDB,
 };

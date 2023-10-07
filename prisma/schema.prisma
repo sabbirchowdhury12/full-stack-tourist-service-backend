@@ -21,6 +21,8 @@ model User {
   profileImg String
   reviewAndRatings ReviewAndRating[]
   orders Order[]
+
+  @@map("users")
 }
 
 enum UserRole {
@@ -32,6 +34,8 @@ model Category {
   id    String   @id @default(uuid()) 
   title String
   books Book[]
+
+  @@map("categories")
   
 }
 
@@ -48,6 +52,8 @@ model Book {
   orderedBooks    OrderedBook[]
 
 
+@@map("books")
+
 }
 
 model ReviewAndRating {
@@ -58,6 +64,8 @@ model ReviewAndRating {
   bookId  String
   user    User      @relation(fields: [userId], references: [id])
   book    Book      @relation(fields: [bookId], references: [id])
+
+  @@map("review_and_ratings")
 }
 
 
@@ -69,6 +77,8 @@ model Order {
   createdAt     DateTime     @default(now())
   user          User         @relation(fields: [userId], references: [id])
   
+
+  @@map("orders")
 }
 
 enum OrderStatus {
@@ -84,4 +94,6 @@ model OrderedBook {
   quantity  Int
   order     Order        @relation(fields: [orderId], references: [id])
   book      Book         @relation(fields: [bookId], references: [id])
+
+  @@map("order_books")
 }

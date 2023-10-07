@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import ApiError from "../../../errors/ApiError";
 import prisma from "../../../shared/prisma";
 
 const insertIntoDB = async (orderedBooks: any, userInfo: any) => {
@@ -64,7 +66,34 @@ const getAllFromDB = async (userInfo: any) => {
   }
 };
 
+const getSingleFromDB = async (id: string, userInfo: any) => {
+  const order = await prisma.order.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      orderedBooks: {
+        select: {
+          bookId: true,
+          quantity: true,
+        },
+      },
+    },
+  });
+
+  if (userInfo.role == "admin") {
+    return order;
+  }
+
+  if (userInfo.role == "customer" && userInfo.userId == order?.userId) {
+    return order;
+  } else {
+    throw new ApiError(httpStatus.FORBIDDEN, "you have no access ");
+  }
+};
+
 export const OrderService = {
   insertIntoDB,
   getAllFromDB,
+  getSingleFromDB,
 };

@@ -19,10 +19,6 @@ app.use("/api/v1/categories", CategoryRouter);
 app.use("/api/v1/books", BookRouter);
 app.use("/api/v1/orders", OrderRouter);
 
-// app.use("/api/v1/cows", cowRouter);
-// app.use("/api/v1/orders", orderRoute);
-// app.use("/api/v1/admins", adminRoute);
-
 app.use(globalErrorHandler);
 
 app.get("/", async (req: Request, res: Response) => {

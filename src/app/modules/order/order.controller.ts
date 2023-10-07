@@ -52,7 +52,7 @@ const getSingleFromDB = async (
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Book fetched successfully",
+      message: "Order fetched successfully",
       data: result,
     });
   } catch (error) {

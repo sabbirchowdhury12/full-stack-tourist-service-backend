@@ -48,7 +48,7 @@ const getSingleFromDB = async (
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "User getched successfully",
+      message: "User fetched successfully",
       data: result,
     });
   } catch (error) {
@@ -111,6 +111,22 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userInfo = req.user;
+    const result = await UserService.getProfile(userInfo);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const UserController = {
   insertToDB,
   getAllFromDB,
@@ -118,4 +134,5 @@ export const UserController = {
   getSingleFromDB,
   updateOneToDB,
   deleteOneFromDB,
+  getProfile,
 };

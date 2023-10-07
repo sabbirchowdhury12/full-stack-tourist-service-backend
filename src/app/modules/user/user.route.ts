@@ -9,6 +9,11 @@ router.post("/auth/signup", UserController.insertToDB);
 router.post("/auth/signin", UserController.userLogin);
 router.get("/users", auth(ENUM_USER_ROLE.ADMIN), UserController.getAllFromDB);
 router.get(
+  "/profile",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.CUSTOMER),
+  UserController.getProfile
+);
+router.get(
   "/users/:id",
   auth(ENUM_USER_ROLE.ADMIN),
   UserController.getSingleFromDB

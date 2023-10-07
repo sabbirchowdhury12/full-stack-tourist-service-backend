@@ -100,6 +100,16 @@ const userLogin = async (email: string, password: string): Promise<string> => {
 
   return accessToken;
 };
+const getProfile = async (userInfo: any): Promise<User | null> => {
+  const id = userInfo?.userId;
+  const result = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return result;
+};
 
 export const UserService = {
   insertIntoDB,
@@ -108,4 +118,5 @@ export const UserService = {
   getSingleFromDB,
   updateOneToDB,
   deleteOneFromDB,
+  getProfile,
 };

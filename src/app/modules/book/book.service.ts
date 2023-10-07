@@ -1,5 +1,6 @@
 import { Book } from "@prisma/client";
 import prisma from "../../../shared/prisma";
+import { paginationHelpers } from "../../../helpers/paginationHelper";
 
 const insertIntoDB = async (data: Book): Promise<Book> => {
   const result = await prisma.book.create({
@@ -11,8 +12,20 @@ const insertIntoDB = async (data: Book): Promise<Book> => {
 
   return result;
 };
-const getAllFromDB = async (): Promise<Book[]> => {
-  const result = await prisma.book.findMany({});
+const getAllFromDB = async (options: any): Promise<Book[]> => {
+  const { limit, page, skip } = paginationHelpers.calculatePagination(options);
+  const result = await prisma.book.findMany({
+    skip,
+    take: limit,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? {
+            [options.sortBy]: options.sortOrder,
+          }
+        : {
+            id: "asc",
+          },
+  });
 
   return result;
 };

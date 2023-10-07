@@ -1,5 +1,4 @@
-import { SortOrder } from "mongoose";
-
+type SortOrder = "asc" | "desc";
 type IOptions = {
   page?: number;
   limit?: number;

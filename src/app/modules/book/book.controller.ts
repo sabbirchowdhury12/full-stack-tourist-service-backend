@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import sendResponse from "../../../shared/sendResponse";
 import { NextFunction, Request, Response } from "express";
 import { BookService } from "./book.service";
+import pick from "../../../shared/pick";
 
 const insertToDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -24,7 +25,9 @@ const getAllFromDB = async (
   next: NextFunction
 ) => {
   try {
-    const result = await BookService.getAllFromDB();
+    // const filters = pick(req.query, studentFilterableFields);
+    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    const result = await BookService.getAllFromDB(options);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,

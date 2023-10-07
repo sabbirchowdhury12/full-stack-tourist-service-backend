@@ -6,8 +6,9 @@ interface IResponse<T> {
   message: string;
   meta?: {
     page: number;
-    limit: number;
+    size: number;
     total: number;
+    totalPage: number;
   } | null;
   data: T | null;
 }

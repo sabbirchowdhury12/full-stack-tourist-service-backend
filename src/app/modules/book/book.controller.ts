@@ -25,15 +25,21 @@ const getAllFromDB = async (
   next: NextFunction
 ) => {
   try {
-    // const filters = pick(req.query, studentFilterableFields);
+    const filters = pick(req.query, [
+      "search",
+      "minPrice",
+      "maxPrice",
+      "category",
+    ]);
     const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const result = await BookService.getAllFromDB(options);
+    const result = await BookService.getAllFromDB(options, filters);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: "Books  fetched  successfully",
-      data: result,
+      meta: result.meta,
+      data: result.data,
     });
   } catch (error) {
     next(error);
@@ -98,6 +104,27 @@ const deleteOneFromDB = async (
     next(error);
   }
 };
+const getSingleByCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    const result = await BookService.getSingleByCategory(id, options);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Books with associated category data fetched successfully",
+      meta: result.meta,
+      data: result.data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const BookController = {
   insertToDB,
@@ -105,4 +132,5 @@ export const BookController = {
   getSingleFromDB,
   updateOneToDB,
   deleteOneFromDB,
+  getSingleByCategory,
 };

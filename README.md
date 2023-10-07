@@ -1,3 +1,5 @@
+send jwt token key `authorization`
+
 ### Application Routes
 
 ### User
@@ -13,6 +15,8 @@
     - https://book-catallg-backend.vercel.app/api/v1/users/0f8c405d-6e23-48f3-99ba-9dc798edab74 (PATCH)
 
     - https://book-catallg-backend.vercel.app/api/v1/users/0f8c405d-6e23-48f3-99ba-9dc798edab74 (DELETE)
+
+    - https://book-catallg-backend.vercel.app/api/v1/profile (GET)
 
 ### Category
 
@@ -42,14 +46,17 @@
 ### Order
 
     - https://book-catallg-backend.vercel.app/api/v1/orders/create-order (POST)
+
     - https://book-catallg-backend.vercel.app/api/v1/orders (GET)
 
-### Auth (Admin)
+     - https://book-catallg-backend.vercel.app/api/v1/orders/efde139e-6807-4035-9c63-c7e9afa173de (GET)
 
-    - https://cow-hut-backend-seven.vercel.app/api/v1/admins/create-admin (POST)
-    - https://cow-hut-backend-seven.vercel.app/api/v1/admins/login (POST)
+## Bonus
 
-#### orders
+### Single Order
 
-    - https://cow-hut-backend-seven.vercel.app/api/v1/orders (POST)
-    - https://cow-hut-backend-seven.vercel.app/api/v1/orders (GET)
+    - https://book-catallg-backend.vercel.app/api/v1/orders/ec455dd5-b888-4080-aaa8-abc74e7bc20e (GET)
+
+### Get User Profile
+
+    - https://book-catallg-backend.vercel.app/api/v1/profile (GET)

@@ -104,7 +104,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
       statusCode: httpStatus.OK,
       success: true,
       message: "User signin successfully!",
-      data: result,
+      data: { token: result },
     });
   } catch (error) {
     next(error);

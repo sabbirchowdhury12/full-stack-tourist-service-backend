@@ -18,83 +18,7 @@ const insertToDB = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
-const getAllFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const result = await UserService.getAllFromDB();
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Users retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-const getSingleFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = req.params.id;
-    const result = await UserService.getSingleFromDB(id);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User fetched successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-const updateOneToDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = req.params.id;
-    const data = req.body;
-    const result = await UserService.updateOneToDB(id, data);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User updated successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const deleteOneFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = req.params.id;
-    const result = await UserService.deleteOneFromDB(id);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Uers deleted successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
@@ -111,28 +35,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getProfile = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userInfo = req.user;
-    const result = await UserService.getProfile(userInfo);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User fetched successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const UserController = {
   insertToDB,
-  getAllFromDB,
   userLogin,
-  getSingleFromDB,
-  updateOneToDB,
-  deleteOneFromDB,
-  getProfile,
 };

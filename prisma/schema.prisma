@@ -10,90 +10,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
-  id        String   @id @default(uuid()) 
-  name      String
-  email     String   @unique
-  password  String
-  role      UserRole  
+  id    String      @id  @default(uuid())
+  name  String
+  email String  @unique
+  password String
+  role UserRole
   contactNo String
-  address   String
-  profileImg String
-  reviewAndRatings ReviewAndRating[]
-  orders Order[]
+  address String
 
   @@map("users")
+  
 }
 
 enum UserRole {
+  super_admin
   admin
-  customer
-}
-
-model Category {
-  id    String   @id @default(uuid()) 
-  title String
-  books Book[]
-
-  @@map("categories")
-  
-}
-
-model Book {
-  id             String    @id @default(uuid()) 
-  title          String
-  author         String
-  price          Float
-  genre          String
-  publicationDate String
-  categoryId     String
-  category       Category @relation(fields: [categoryId], references: [id])
-  reviewAndRatings ReviewAndRating[]
-  orderedBooks    OrderedBook[]
-
-
-@@map("books")
-
-}
-
-model ReviewAndRating {
-  id      String    @id @default(uuid()) 
-  review  String
-  rating  Int     
-  userId  String
-  bookId  String
-  user    User      @relation(fields: [userId], references: [id])
-  book    Book      @relation(fields: [bookId], references: [id])
-
-  @@map("review_and_ratings")
-}
-
-
-model Order {
-  id            String       @id @default(uuid())
-  userId        String
-  orderedBooks  OrderedBook[] 
-  status        OrderStatus      @default(pending)
-  createdAt     DateTime     @default(now())
-  user          User         @relation(fields: [userId], references: [id])
-  
-
-  @@map("orders")
-}
-
-enum OrderStatus {
-  pending
-  shipped
-  delivered
-}
-
-model OrderedBook {
-  id        String       @id @default(uuid())
-  orderId   String       
-  bookId    String
-  quantity  Int
-  order     Order        @relation(fields: [orderId], references: [id])
-  book      Book         @relation(fields: [bookId], references: [id])
-
-  @@map("order_books")
+  user
 }

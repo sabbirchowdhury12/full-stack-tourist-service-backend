@@ -28,9 +28,6 @@ app.use("/api/v1", user_route_1.UserRouter);
 app.use("/api/v1/categories", category_route_1.CategoryRouter);
 app.use("/api/v1/books", book_route_1.BookRouter);
 app.use("/api/v1/orders", order_route_1.OrderRouter);
-// app.use("/api/v1/cows", cowRouter);
-// app.use("/api/v1/orders", orderRoute);
-// app.use("/api/v1/admins", adminRoute);
 app.use(globalErrorHandler_1.default);
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("Hello World!");

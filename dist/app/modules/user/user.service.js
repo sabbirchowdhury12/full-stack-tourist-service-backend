@@ -102,6 +102,15 @@ const userLogin = (email, password) => __awaiter(void 0, void 0, void 0, functio
     }, config_1.default.jwt_secret_key, { expiresIn: "365d" });
     return accessToken;
 });
+const getProfile = (userInfo) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = userInfo === null || userInfo === void 0 ? void 0 : userInfo.userId;
+    const result = yield prisma_1.default.user.findUnique({
+        where: {
+            id,
+        },
+    });
+    return result;
+});
 exports.UserService = {
     insertIntoDB,
     userLogin,
@@ -109,4 +118,5 @@ exports.UserService = {
     getSingleFromDB,
     updateOneToDB,
     deleteOneFromDB,
+    getProfile,
 };

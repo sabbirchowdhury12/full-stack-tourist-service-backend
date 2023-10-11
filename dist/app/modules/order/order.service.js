@@ -13,6 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
+const http_status_1 = __importDefault(require("http-status"));
+const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const insertIntoDB = (orderedBooks, userInfo) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(userInfo);
@@ -70,7 +72,32 @@ const getAllFromDB = (userInfo) => __awaiter(void 0, void 0, void 0, function* (
             } }));
     }
 });
+const getSingleFromDB = (id, userInfo) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield prisma_1.default.order.findUnique({
+        where: {
+            id,
+        },
+        include: {
+            orderedBooks: {
+                select: {
+                    bookId: true,
+                    quantity: true,
+                },
+            },
+        },
+    });
+    if (userInfo.role == "admin") {
+        return order;
+    }
+    if (userInfo.role == "customer" && userInfo.userId == (order === null || order === void 0 ? void 0 : order.userId)) {
+        return order;
+    }
+    else {
+        throw new ApiError_1.default(http_status_1.default.FORBIDDEN, "you have no access ");
+    }
+});
 exports.OrderService = {
     insertIntoDB,
     getAllFromDB,
+    getSingleFromDB,
 };

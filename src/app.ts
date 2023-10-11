@@ -5,9 +5,7 @@ import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
 
 import { UserRouter } from "./app/modules/user/user.route";
-import { CategoryRouter } from "./app/modules/category/category.route";
-import { BookRouter } from "./app/modules/book/book.route";
-import { OrderRouter } from "./app/modules/order/order.route";
+
 const app = express();
 
 app.use(cors());
@@ -15,9 +13,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", UserRouter);
-app.use("/api/v1/categories", CategoryRouter);
-app.use("/api/v1/books", BookRouter);
-app.use("/api/v1/orders", OrderRouter);
 
 app.use(globalErrorHandler);
 

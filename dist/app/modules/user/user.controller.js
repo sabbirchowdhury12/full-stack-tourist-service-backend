@@ -52,7 +52,7 @@ const getSingleFromDB = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.OK,
             success: true,
-            message: "User getched successfully",
+            message: "User fetched successfully",
             data: result,
         });
     }
@@ -99,6 +99,21 @@ const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function
             statusCode: http_status_1.default.OK,
             success: true,
             message: "User signin successfully!",
+            data: { token: result },
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+const getProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userInfo = req.user;
+        const result = yield user_service_1.UserService.getProfile(userInfo);
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.OK,
+            success: true,
+            message: "User fetched successfully",
             data: result,
         });
     }
@@ -113,4 +128,5 @@ exports.UserController = {
     getSingleFromDB,
     updateOneToDB,
     deleteOneFromDB,
+    getProfile,
 };

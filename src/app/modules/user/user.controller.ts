@@ -27,8 +27,45 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "User signin successfully!",
-      data: { token: result },
+      message: "Login successfully!",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.query.id as string;
+    const user = req.user;
+    const result = await UserService.getProfile(id, user);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Profile get successfully!",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.query.id as string;
+    const data = req.body;
+    const user = req.user;
+    const result = await UserService.updateProfile(id, user, data);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Login successfully!",
+      data: result,
     });
   } catch (error) {
     next(error);
@@ -38,4 +75,6 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
 export const UserController = {
   insertToDB,
   userLogin,
+  getProfile,
+  updateProfile,
 };

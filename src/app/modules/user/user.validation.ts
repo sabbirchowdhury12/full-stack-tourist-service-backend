@@ -11,15 +11,21 @@ const createZodSchema = z.object({
     password: z.string({
       required_error: "Password is required",
     }),
-    role: z.string({
-      required_error: "role is required",
-    }),
-    contactNo: z.string({
-      required_error: "contactNo is required",
-    }),
-    address: z.string({
-      required_error: "address is required",
-    }),
+    address: z
+      .string({
+        required_error: "email is required",
+      })
+      .optional(),
+    contactNo: z
+      .string({
+        required_error: "Password is required",
+      })
+      .optional(),
+    image: z
+      .string({
+        required_error: "Password is required",
+      })
+      .optional(),
   }),
 });
 

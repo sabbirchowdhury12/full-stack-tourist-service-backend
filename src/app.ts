@@ -5,6 +5,7 @@ import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import httpStatus from "http-status";
 
 import { UserRouter } from "./app/modules/user/user.route";
+import { ServiceRouter } from "./app/modules/service/service.route";
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/v1/service", ServiceRouter);
 app.use("/api/v1", UserRouter);
 
 app.use(globalErrorHandler);

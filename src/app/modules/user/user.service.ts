@@ -6,7 +6,7 @@ import config from "../../../config";
 import { User } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 
-const insertIntoDB = async (data: User): Promise<Omit<User, "password">> => {
+const insertIntoDB = async (data: User) => {
   if (data?.password) {
     const hashPassword = await bcrypt.hash(data.password, 10);
     data.password = hashPassword;
@@ -15,8 +15,18 @@ const insertIntoDB = async (data: User): Promise<Omit<User, "password">> => {
     data,
   });
 
+  const accessToken = jwt.sign(
+    {
+      role: result.role,
+      userId: result.id,
+    },
+    config.jwt_secret_key as Secret,
+    { expiresIn: "365d" }
+  );
+
   const { password, ...others } = result;
-  return others;
+
+  return { user: others, accessToken };
 };
 // const getAllFromDB = async (): Promise<Omit<User, "password">[]> => {
 //   const result = await prisma.user.findMany({});
@@ -75,7 +85,7 @@ const insertIntoDB = async (data: User): Promise<Omit<User, "password">> => {
 //   const { password, ...others } = result;
 //   return others;
 // };
-const userLogin = async (email: string, password: string): Promise<string> => {
+const userLogin = async (email: string, password: string) => {
   const user = await prisma.user.findUnique({
     where: {
       email,
@@ -101,20 +111,51 @@ const userLogin = async (email: string, password: string): Promise<string> => {
     { expiresIn: "365d" }
   );
 
-  return accessToken;
-};
-// const getProfile = async (userInfo: any): Promise<User | null> => {
-//   const id = userInfo?.userId;
-//   const result = await prisma.user.findUnique({
-//     where: {
-//       id,
-//     },
-//   });
+  const userWithoutPassword = { ...user, password: undefined };
 
-//   return result;
-// };
+  return { user: userWithoutPassword, accessToken };
+};
+const getProfile = async (id: string, user: any): Promise<User | null> => {
+  if (user.role == "user" && user.id !== id) {
+    throw new ApiError(httpStatus.FORBIDDEN, "You have no access");
+  }
+
+  if ((user.role == "user" && user.id == id) || user.role == "admin") {
+    const result = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return result;
+  }
+
+  return null;
+};
+const updateProfile = async (
+  id: string,
+  user: any,
+  data: Partial<User>
+): Promise<User | null> => {
+  if (user.role == "user" && user.id !== id) {
+    throw new ApiError(httpStatus.FORBIDDEN, "You have no access");
+  }
+
+  if ((user.role == "user" && user.id == id) || user.role == "admin") {
+    const result = await prisma.user.update({
+      where: {
+        id,
+      },
+      data,
+    });
+    return result;
+  }
+
+  return null;
+};
 
 export const UserService = {
   insertIntoDB,
   userLogin,
+  getProfile,
+  updateProfile,
 };

@@ -2,6 +2,8 @@ import express from "express";
 import { UserController } from "./user.controller";
 import validateRequest from "../../middleware/validationRequest.ts";
 import { AuthValidation } from "./user.validation";
+import auth from "../../middleware/auth";
+import { ENUM_USER_ROLE } from "../../../enums/user";
 const router = express.Router();
 
 router.post(
@@ -10,6 +12,16 @@ router.post(
   UserController.insertToDB
 );
 router.post("/auth/login", UserController.userLogin);
+router.get(
+  "/profile/:id",
+  auth(ENUM_USER_ROLE.ADMIN),
+  UserController.getProfile
+);
+router.post(
+  "/profile/:id",
+  auth(ENUM_USER_ROLE.ADMIN),
+  UserController.updateProfile
+);
 
 // router.get("/users", auth(ENUM_USER_ROLE.ADMIN), UserController.getAllFromDB);
 // router.get(

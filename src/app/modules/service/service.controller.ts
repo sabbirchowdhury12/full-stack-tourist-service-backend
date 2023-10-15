@@ -10,9 +10,9 @@ const getAllService = async (
   next: NextFunction
 ) => {
   try {
-    // const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const filters = pick(req.query, ["price", "search"]);
-    const result = await ServicesService.getAllService(filters);
+    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    const filters = pick(req.query, ["minPrice", "maxPrice", "search"]);
+    const result = await ServicesService.getAllService(filters, options);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -44,8 +44,29 @@ const insertIntoDB = async (
     next(error);
   }
 };
+const getSingleFromDB = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const result = await ServicesService.getSingleFromDB(id);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "service created successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const ServiceController = {
   getAllService,
   insertIntoDB,
+  getSingleFromDB,
 };

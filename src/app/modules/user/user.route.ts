@@ -19,8 +19,13 @@ router.get(
 );
 router.post(
   "/profile/:id",
-  auth(ENUM_USER_ROLE.ADMIN),
+
   UserController.updateProfile
+);
+router.post(
+  "/change-password/:id",
+
+  UserController.changePassword
 );
 
 // router.get("/users", auth(ENUM_USER_ROLE.ADMIN), UserController.getAllFromDB);

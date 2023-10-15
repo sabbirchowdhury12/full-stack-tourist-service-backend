@@ -17,7 +17,7 @@ model User {
   email String  @unique
   password String
   role UserRole @default(user)
-  adress String? 
+  address String? 
   contactNo String?
   image String?
 
@@ -88,6 +88,7 @@ model Rating {
 model BookAndShedule {
   id    String      @id  @default(uuid())
   date    Json  
+  status String
   service   Service @relation(fields: [serviceId], references: [id])
   serviceId String
   user      User    @relation(fields: [userId], references: [id])

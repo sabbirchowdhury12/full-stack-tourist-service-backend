@@ -18,7 +18,7 @@ const insertIntoDB = async (data: User) => {
   const accessToken = jwt.sign(
     {
       role: result.role,
-      userId: result.id,
+      id: result.id,
     },
     config.jwt_secret_key as Secret,
     { expiresIn: "365d" }
@@ -105,7 +105,7 @@ const userLogin = async (email: string, password: string) => {
   const accessToken = jwt.sign(
     {
       role: user.role,
-      userId: user.id,
+      id: user.id,
     },
     config.jwt_secret_key as Secret,
     { expiresIn: "365d" }
@@ -119,8 +119,9 @@ const getProfile = async (id: string, user: any): Promise<User | null> => {
   if (user.role == "user" && user.id !== id) {
     throw new ApiError(httpStatus.FORBIDDEN, "You have no access");
   }
-
+  console.log(user);
   if ((user.role == "user" && user.id == id) || user.role == "admin") {
+    console.log(id);
     const result = await prisma.user.findUnique({
       where: {
         id,
@@ -131,26 +132,51 @@ const getProfile = async (id: string, user: any): Promise<User | null> => {
 
   return null;
 };
-const updateProfile = async (
-  id: string,
-  user: any,
-  data: Partial<User>
-): Promise<User | null> => {
-  if (user.role == "user" && user.id !== id) {
-    throw new ApiError(httpStatus.FORBIDDEN, "You have no access");
-  }
+const updateProfile = async (id: string, data: any) => {
+  console.log(id, data);
+  const result = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name: data.name,
+      address: data.address,
+      contactNo: data.contactNo,
+    },
+  });
 
-  if ((user.role == "user" && user.id == id) || user.role == "admin") {
-    const result = await prisma.user.update({
-      where: {
-        id,
-      },
-      data,
-    });
-    return result;
-  }
+  console.log(result);
+  return result;
+};
 
-  return null;
+const changePassword = async (id: string, password: any) => {
+  console.log(password);
+  const result = await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_ACCEPTABLE, "current password is wrong");
+  }
+  const passwordValidation = await bcrypt.compare(
+    password.currentPassword,
+    result.password
+  );
+
+  if (!passwordValidation) {
+    throw new Error("your  password is wrong");
+  }
+  const changePassword = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      password: password.password,
+    },
+  });
+
+  return changePassword;
 };
 
 export const UserService = {
@@ -158,4 +184,5 @@ export const UserService = {
   userLogin,
   getProfile,
   updateProfile,
+  changePassword,
 };

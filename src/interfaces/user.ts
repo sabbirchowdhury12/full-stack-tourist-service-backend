@@ -1,4 +1,4 @@
-export type AuthorizedUser = {
+export type AuthUser = {
   id: string;
   role: string;
 };

@@ -36,7 +36,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
 };
 const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.query.id as string;
+    const id = req.params.id;
     const user = req.user;
     const result = await UserService.getProfile(id, user);
 
@@ -56,15 +56,36 @@ const updateProfile = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.query.id as string;
-    const data = req.body;
-    const user = req.user;
-    const result = await UserService.updateProfile(id, user, data);
+    const id = req.params.id;
+    const { profileData } = req.body;
+
+    const result = await UserService.updateProfile(id, profileData);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Login successfully!",
+      message: "updated successfully!",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const changePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const password = req.body;
+
+    const result = await UserService.changePassword(id, password);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Password Changed successfully!",
       data: result,
     });
   } catch (error) {
@@ -77,4 +98,5 @@ export const UserController = {
   userLogin,
   getProfile,
   updateProfile,
+  changePassword,
 };

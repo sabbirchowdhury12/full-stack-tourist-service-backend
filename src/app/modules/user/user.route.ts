@@ -11,43 +11,27 @@ router.post(
   validateRequest(AuthValidation.createZodSchema),
   UserController.insertToDB
 );
-router.post("/auth/login", UserController.userLogin);
+router.post(
+  "/auth/login",
+  validateRequest(AuthValidation.loginZodSchema),
+  UserController.userLogin
+);
 router.get(
   "/profile/:id",
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
   UserController.getProfile
 );
 router.post(
   "/profile/:id",
-
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
   UserController.updateProfile
 );
 router.post(
   "/change-password/:id",
+  validateRequest(AuthValidation.changePasswordZodSchema),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
 
   UserController.changePassword
 );
-
-// router.get("/users", auth(ENUM_USER_ROLE.ADMIN), UserController.getAllFromDB);
-// router.get(
-//   "/profile",
-//   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.CUSTOMER),
-//   UserController.getProfile
-// );
-// router.get(
-//   "/users/:id",
-//   auth(ENUM_USER_ROLE.ADMIN),
-//   UserController.getSingleFromDB
-// );
-// router.patch(
-//   "/users/:id",
-//   auth(ENUM_USER_ROLE.ADMIN),
-//   UserController.updateOneToDB
-// );
-// router.delete(
-//   "/users/:id",
-//   auth(ENUM_USER_ROLE.ADMIN),
-//   UserController.deleteOneFromDB
-// );
 
 export const UserRouter = router;

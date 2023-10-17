@@ -13,20 +13,96 @@ const insertIntoDB = async (
   return result;
 };
 const getAllFromDB = async (
-  user: JwtPayload | undefined
+  user: JwtPayload | undefined,
+  statusValue: any
 ): Promise<BookAndShedule[] | undefined> => {
-  if (user?.role == "admin") {
-    const result = await prisma.bookAndShedule.findMany({});
-    return result;
-  } else if (user?.role == "user") {
-    const result = await prisma.bookAndShedule.findMany({
-      where: {
-        id: user?.id,
-      },
-    });
+  let result;
 
-    return result;
+  if (user?.role == "admin") {
+    if (statusValue == "all") {
+      result = await prisma.bookAndShedule.findMany({
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+          service: {
+            select: {
+              service_name: true,
+            },
+          },
+        },
+      });
+    } else if (statusValue == "cancel" || statusValue == "active") {
+      result = await prisma.bookAndShedule.findMany({
+        where: {
+          status: statusValue,
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+          service: {
+            select: {
+              service_name: true,
+            },
+          },
+        },
+      });
+    }
+  } else if (user?.role == "user") {
+    if (statusValue == "all") {
+      result = await prisma.bookAndShedule.findMany({
+        where: {
+          userId: user.id,
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+          service: {
+            select: {
+              service_name: true,
+            },
+          },
+        },
+      });
+    } else if (statusValue == "cancel" || statusValue == "active") {
+      result = await prisma.bookAndShedule.findMany({
+        where: {
+          userId: user.id,
+          status: statusValue,
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+          service: {
+            select: {
+              service_name: true,
+            },
+          },
+        },
+      });
+    }
   }
+
+  return result;
 };
 
 const cancelBooking = async (
@@ -43,16 +119,23 @@ const cancelBooking = async (
       },
     });
     return result;
-  } else if (user?.role == "user" && user?.id == id) {
-    const result = await prisma.bookAndShedule.update({
+  } else if (user?.role == "user") {
+    const booking = await prisma.bookAndShedule.findUnique({
       where: {
         id,
       },
-      data: {
-        status: "cancel",
-      },
     });
-    return result;
+    if (booking?.userId == user?.id) {
+      const result = await prisma.bookAndShedule.update({
+        where: {
+          id,
+        },
+        data: {
+          status: "cancel",
+        },
+      });
+      return result;
+    }
   }
 };
 

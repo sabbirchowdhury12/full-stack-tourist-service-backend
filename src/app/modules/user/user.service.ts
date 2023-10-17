@@ -119,9 +119,8 @@ const getProfile = async (id: string, user: any): Promise<User | null> => {
   if (user.role == "user" && user.id !== id) {
     throw new ApiError(httpStatus.FORBIDDEN, "You have no access");
   }
-  console.log(user);
+
   if ((user.role == "user" && user.id == id) || user.role == "admin") {
-    console.log(id);
     const result = await prisma.user.findUnique({
       where: {
         id,
@@ -133,7 +132,6 @@ const getProfile = async (id: string, user: any): Promise<User | null> => {
   return null;
 };
 const updateProfile = async (id: string, data: any) => {
-  console.log(id, data);
   const result = await prisma.user.update({
     where: {
       id: id,
@@ -145,12 +143,10 @@ const updateProfile = async (id: string, data: any) => {
     },
   });
 
-  console.log(result);
   return result;
 };
 
 const changePassword = async (id: string, password: any) => {
-  console.log(password);
   const result = await prisma.user.findUnique({
     where: {
       id: id,

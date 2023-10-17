@@ -6,6 +6,7 @@ import { BookingService } from "./booking.service";
 const insertToDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const bookingData = req.body;
+
     const result = await BookingService.insertIntoDB(bookingData);
 
     sendResponse(res, {
@@ -25,12 +26,15 @@ const getAllFromDB = async (
 ) => {
   try {
     const user = req.user;
-    const result = await BookingService.getAllFromDB(user);
+
+    const { statusValue } = req.query;
+
+    const result = await BookingService.getAllFromDB(user, statusValue);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Order  created successfully",
+      message: "Booking Data fetched successfully",
       data: result,
     });
   } catch (error) {
@@ -50,7 +54,7 @@ const cancelBooking = async (
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Order created successfully",
+      message: "Cancel booking successfully",
       data: result,
     });
   } catch (error) {

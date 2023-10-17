@@ -2,11 +2,14 @@ import express from "express";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 import auth from "../../middleware/auth";
 import { BookingController } from "./booking.contoller";
+import validateRequest from "../../middleware/validationRequest.ts";
+import { BookingValidation } from "./booking.validation";
 
 const router = express.Router();
 
 router.post(
   "/create-booking",
+  validateRequest(BookingValidation.createZodSchema),
   auth(ENUM_USER_ROLE.USER),
   BookingController.insertToDB
 );

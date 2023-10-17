@@ -51,7 +51,6 @@ const getSingleFromDB = async (
 ) => {
   try {
     const id = req.params.id;
-    console.log(id);
     const result = await ServicesService.getSingleFromDB(id);
 
     sendResponse(res, {
@@ -65,8 +64,30 @@ const getSingleFromDB = async (
   }
 };
 
+const getAvailableService = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { searchValue } = req.query;
+
+    const result = await ServicesService.getAvailableService(searchValue);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Availeable service fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const ServiceController = {
   getAllService,
   insertIntoDB,
   getSingleFromDB,
+  getAvailableService,
 };

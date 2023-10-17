@@ -18,10 +18,7 @@ const auth =
     try {
       const token = req.headers.authorization;
       if (!token) {
-        throw new ApiError(
-          httpStatus.UNAUTHORIZED,
-          "You are not Authorized, send a token via 'authorization' in headers"
-        );
+        throw new ApiError(httpStatus.UNAUTHORIZED, "You are not Authorized.");
       }
 
       const verifiedUser = jwt.verify(

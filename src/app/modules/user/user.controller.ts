@@ -34,6 +34,21 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = req.user;
+    const result = await UserService.getAllUser(user);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Users fetched successfully!",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
@@ -57,9 +72,10 @@ const updateProfile = async (
 ) => {
   try {
     const id = req.params.id;
-    const { profileData } = req.body;
+    const user = req.user;
+    const userData = req.body;
 
-    const result = await UserService.updateProfile(id, profileData);
+    const result = await UserService.updateProfile(id, user, userData);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -92,6 +108,21 @@ const changePassword = async (
     next(error);
   }
 };
+const makeAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    const result = await UserService.makeAdmin(id);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Make admin successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const UserController = {
   insertToDB,
@@ -99,4 +130,6 @@ export const UserController = {
   getProfile,
   updateProfile,
   changePassword,
+  getAllUser,
+  makeAdmin,
 };

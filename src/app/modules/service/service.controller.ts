@@ -18,7 +18,8 @@ const getAllService = async (
       statusCode: httpStatus.OK,
       success: true,
       message: "Service fetched successfully",
-      data: result,
+      meta: result.meta,
+      data: result.data,
     });
   } catch (error) {
     next(error);
@@ -44,6 +45,26 @@ const insertIntoDB = async (
     next(error);
   }
 };
+const updateService = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const serviceData = req.body;
+    const result = await ServicesService.updateService(id, serviceData);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "service updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const getSingleFromDB = async (
   req: Request,
   res: Response,
@@ -57,6 +78,25 @@ const getSingleFromDB = async (
       statusCode: httpStatus.OK,
       success: true,
       message: "service created successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const deleteFromDB = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const result = await ServicesService.deleteFromDB(id);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "service deleted successfully",
       data: result,
     });
   } catch (error) {
@@ -90,4 +130,6 @@ export const ServiceController = {
   insertIntoDB,
   getSingleFromDB,
   getAvailableService,
+  updateService,
+  deleteFromDB,
 };

@@ -20,7 +20,8 @@ model User {
   address String? 
   contactNo String?
   image String?
-
+ createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
   reviews  Review[]
   ratings  Rating[]
   booked BookAndShedule[]
@@ -41,7 +42,7 @@ enum UserRole {
 model Service {
   id    String      @id  @default(uuid())
   service_name String
-  category String
+  category ServiceCategory
   location String
   price Int 
   image String
@@ -51,6 +52,7 @@ model Service {
   reviews  Review[]
   ratings  Rating[]
   booked BookAndShedule[]
+  
 
   
    @@map("services")
@@ -58,6 +60,11 @@ model Service {
 enum BookingStatus {
   upcoming
   available
+}
+enum ServiceCategory {
+  hotel
+  car
+  tour
 }
 
 model Review {
@@ -67,6 +74,8 @@ model Review {
   user      User    @relation(fields: [userId], references: [id])
   userId    String
   comment   String
+   createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
   
    @@map("reviews")
 }
@@ -78,6 +87,8 @@ model Rating {
   user      User    @relation(fields: [userId], references: [id])
   userId    String
   rating    String
+   createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
 
    @@map("ratings")
 }
@@ -86,7 +97,7 @@ model Rating {
 model BookAndShedule {
   id    String      @id  @default(uuid())
   date    Json  
-  status BookAndSheduleStatus     @default(active)
+  status BookAndSheduleStatus     @default(pending)
   service   Service @relation(fields: [serviceId], references: [id])
   serviceId String
   user      User    @relation(fields: [userId], references: [id])
@@ -99,6 +110,7 @@ model BookAndShedule {
 }
 
 enum BookAndSheduleStatus {
-  active
-  cancel
+  pending
+  confirmed
+  canceled
 }

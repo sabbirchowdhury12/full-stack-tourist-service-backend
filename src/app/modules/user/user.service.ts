@@ -1,10 +1,11 @@
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import httpStatus from "http-status";
 import ApiError from "../../../errors/ApiError";
 import config from "../../../config";
 import { User } from "@prisma/client";
 import prisma from "../../../shared/prisma";
+import { ENUM_USER_ROLE } from "../../../enums/user";
 
 const insertIntoDB = async (data: User) => {
   if (data?.password) {
@@ -28,63 +29,7 @@ const insertIntoDB = async (data: User) => {
 
   return { user: others, accessToken };
 };
-// const getAllFromDB = async (): Promise<Omit<User, "password">[]> => {
-//   const result = await prisma.user.findMany({});
 
-//   const usersWithoutPassword = result.map((user) => {
-//     const { password, ...others } = user;
-//     return others;
-//   });
-
-//   return usersWithoutPassword;
-// // };
-// const getSingleFromDB = async (id: string): Promise<Omit<User, "password">> => {
-//   const result = await prisma.user.findUnique({
-//     where: {
-//       id,
-//     },
-//   });
-
-//   if (!result) {
-//     throw new ApiError(httpStatus.NOT_FOUND, "user not found");
-//   }
-
-//   const { password, ...others } = result;
-//   return others;
-// };
-// const updateOneToDB = async (
-//   id: string,
-//   data: User
-// ): Promise<Omit<User, "password">> => {
-//   const result = await prisma.user.update({
-//     where: {
-//       id,
-//     },
-//     data,
-//   });
-
-//   if (!result) {
-//     throw new ApiError(httpStatus.NOT_FOUND, "user not found");
-//   }
-
-//   const { password, ...others } = result;
-//   return others;
-// };
-
-// const deleteOneFromDB = async (id: string): Promise<Omit<User, "password">> => {
-//   const result = await prisma.user.delete({
-//     where: {
-//       id,
-//     },
-//   });
-
-//   if (!result) {
-//     throw new ApiError(httpStatus.NOT_FOUND, "user not found");
-//   }
-
-//   const { password, ...others } = result;
-//   return others;
-// };
 const userLogin = async (email: string, password: string) => {
   const user = await prisma.user.findUnique({
     where: {
@@ -115,12 +60,41 @@ const userLogin = async (email: string, password: string) => {
 
   return { user: userWithoutPassword, accessToken };
 };
+const getAllUser = async (user: JwtPayload | undefined): Promise<User[]> => {
+  if (user?.role == "admin") {
+    const result = await prisma.user.findMany({
+      where: {
+        role: "user",
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+    return result;
+  } else {
+    const result = await prisma.user.findMany({
+      where: {
+        role: {
+          in: ["user", "admin"],
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+    return result;
+  }
+};
 const getProfile = async (id: string, user: any): Promise<User | null> => {
   if (user.role == "user" && user.id !== id) {
     throw new ApiError(httpStatus.FORBIDDEN, "You have no access");
   }
 
-  if ((user.role == "user" && user.id == id) || user.role == "admin") {
+  if (
+    (user.role == "user" && user.id == id) ||
+    user?.role == ENUM_USER_ROLE.ADMIN ||
+    user?.role == ENUM_USER_ROLE.SUPER_ADMIN
+  ) {
     const result = await prisma.user.findUnique({
       where: {
         id,
@@ -131,19 +105,24 @@ const getProfile = async (id: string, user: any): Promise<User | null> => {
 
   return null;
 };
-const updateProfile = async (id: string, data: any) => {
-  const result = await prisma.user.update({
-    where: {
-      id: id,
-    },
-    data: {
-      name: data.name,
-      address: data.address,
-      contactNo: data.contactNo,
-    },
-  });
-
-  return result;
+const updateProfile = async (
+  id: string,
+  user: JwtPayload | undefined,
+  data: User
+): Promise<User | undefined> => {
+  if (
+    (user?.role == "user" && user?.id == id) ||
+    user?.role == ENUM_USER_ROLE.ADMIN ||
+    user?.role == ENUM_USER_ROLE.SUPER_ADMIN
+  ) {
+    const result = await prisma.user.update({
+      where: {
+        id,
+      },
+      data,
+    });
+    return result;
+  }
 };
 
 const changePassword = async (id: string, password: any) => {
@@ -175,10 +154,24 @@ const changePassword = async (id: string, password: any) => {
   return changePassword;
 };
 
+const makeAdmin = async (id: string) => {
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      role: "admin",
+    },
+  });
+  return result;
+};
+
 export const UserService = {
   insertIntoDB,
   userLogin,
   getProfile,
   updateProfile,
   changePassword,
+  getAllUser,
+  makeAdmin,
 };

@@ -14,8 +14,16 @@ router.get("/:id", ServiceController.getSingleFromDB);
 router.post(
   "/create-service",
   validateRequest(ServiceValidation.createZodSchema),
-  auth(ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   ServiceController.insertIntoDB
 );
+router.patch(
+  "/:id",
+
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  ServiceController.updateService
+);
+
+router.delete("/:id", ServiceController.deleteFromDB);
 
 export const ServiceRouter = router;

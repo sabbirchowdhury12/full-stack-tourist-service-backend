@@ -2,9 +2,7 @@ import { z } from "zod";
 
 const createZodSchema = z.object({
   body: z.object({
-    date: z.string({
-      required_error: "date is required",
-    }),
+    date: z.object({}),
     status: z
       .string({
         required_error: "status is required",

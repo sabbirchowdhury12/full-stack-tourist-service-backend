@@ -2,6 +2,7 @@ import { BookAndShedule, Prisma } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { AuthUser } from "../../../interfaces/user";
 import { JwtPayload } from "jsonwebtoken";
+import { ENUM_USER_ROLE } from "../../../enums/user";
 
 const insertIntoDB = async (
   data: Prisma.BookAndSheduleCreateInput
@@ -18,7 +19,10 @@ const getAllFromDB = async (
 ): Promise<BookAndShedule[] | undefined> => {
   let result;
 
-  if (user?.role == "admin") {
+  if (
+    user?.role == ENUM_USER_ROLE.ADMIN ||
+    user?.role == ENUM_USER_ROLE.SUPER_ADMIN
+  ) {
     if (statusValue == "all") {
       result = await prisma.bookAndShedule.findMany({
         include: {
@@ -115,7 +119,7 @@ const cancelBooking = async (
         id,
       },
       data: {
-        status: "cancel",
+        status: "canceled",
       },
     });
     return result;
@@ -131,7 +135,7 @@ const cancelBooking = async (
           id,
         },
         data: {
-          status: "cancel",
+          status: "canceled",
         },
       });
       return result;

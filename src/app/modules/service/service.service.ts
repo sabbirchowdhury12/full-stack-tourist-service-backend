@@ -54,7 +54,19 @@ const getAllService = async (filters: any, options: any) => {
         },
   });
 
-  return result;
+  const total = await prisma.service.count({});
+  const size = result.length;
+  const totalPage = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      page,
+      size,
+      total,
+      totalPage,
+    },
+    data: result,
+  };
 };
 const getSingleFromDB = async (id: string) => {
   const result = await prisma.service.findUnique({
@@ -89,7 +101,8 @@ const getSingleFromDB = async (id: string) => {
     },
     select: {
       id: true,
-      name: true, // Select the 'name' field
+      name: true,
+      image: true, // Select the 'name' field
     },
   });
 
@@ -101,7 +114,8 @@ const getSingleFromDB = async (id: string) => {
     },
     select: {
       id: true,
-      name: true, // Select the 'name' field
+      name: true,
+      image: true, // Select the 'name' field
     },
   });
 
@@ -121,8 +135,17 @@ const getSingleFromDB = async (id: string) => {
     ratings: ratingsWithUserNames,
   };
 };
+const updateService = async (id: string, data: any): Promise<Service> => {
+  const result = await prisma.service.update({
+    where: {
+      id,
+    },
+    data,
+  });
+  return result;
+};
 
-const insertIntoDB = async (data: any): Promise<Service> => {
+const insertIntoDB = async (data: Service): Promise<Service> => {
   console.log(data);
   const result = await prisma.service.create({
     data,
@@ -130,18 +153,67 @@ const insertIntoDB = async (data: any): Promise<Service> => {
 
   return result;
 };
+const deleteFromDB = async (id: string): Promise<Service> => {
+  console.log(id);
+  const result = await prisma.service.delete({
+    where: {
+      id,
+    },
+  });
+
+  return result;
+};
 const getAvailableService = async (
   searchValue: any
 ): Promise<Service[] | undefined> => {
-  console.log(searchValue);
   if (searchValue) {
-    const result = await prisma.service.findMany({
-      where: {
-        status: searchValue,
-      },
-    });
+    if (searchValue == "upcoming" || searchValue == "available") {
+      const result = await prisma.service.findMany({
+        where: {
+          status: searchValue,
+        },
+        include: {
+          ratings: {
+            select: {
+              rating: true,
+            },
+          },
+          reviews: {
+            select: {
+              comment: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
 
-    return result;
+      return result;
+    } else {
+      const result = await prisma.service.findMany({
+        where: {
+          category: searchValue,
+        },
+        include: {
+          ratings: {
+            select: {
+              rating: true,
+            },
+          },
+          reviews: {
+            select: {
+              comment: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+
+      return result;
+    }
   } else {
     const result = await prisma.service.findMany({});
     return result;
@@ -153,4 +225,6 @@ export const ServicesService = {
   insertIntoDB,
   getSingleFromDB,
   getAvailableService,
+  updateService,
+  deleteFromDB,
 };

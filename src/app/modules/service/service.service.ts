@@ -160,7 +160,7 @@ const deleteFromDB = async (id: string): Promise<Service> => {
       id,
     },
   });
-
+  console.log(result);
   return result;
 };
 const getAvailableService = async (

@@ -39,8 +39,11 @@ const getAllFromDB = async (
             },
           },
         },
+        orderBy: {
+          createdAt: "asc",
+        },
       });
-    } else if (statusValue == "cancel" || statusValue == "active") {
+    } else {
       result = await prisma.bookAndShedule.findMany({
         where: {
           status: statusValue,
@@ -58,6 +61,9 @@ const getAllFromDB = async (
               service_name: true,
             },
           },
+        },
+        orderBy: {
+          createdAt: "asc",
         },
       });
     }
@@ -82,7 +88,7 @@ const getAllFromDB = async (
           },
         },
       });
-    } else if (statusValue == "cancel" || statusValue == "active") {
+    } else {
       result = await prisma.bookAndShedule.findMany({
         where: {
           userId: user.id,
@@ -113,7 +119,10 @@ const cancelBooking = async (
   id: string,
   user: JwtPayload | undefined
 ): Promise<BookAndShedule | undefined> => {
-  if (user?.role == "admin") {
+  if (
+    user?.role == ENUM_USER_ROLE.ADMIN ||
+    user?.role == ENUM_USER_ROLE.SUPER_ADMIN
+  ) {
     const result = await prisma.bookAndShedule.update({
       where: {
         id,
@@ -142,9 +151,23 @@ const cancelBooking = async (
     }
   }
 };
+const confirmBooking = async (
+  id: string
+): Promise<BookAndShedule | undefined> => {
+  const result = await prisma.bookAndShedule.update({
+    where: {
+      id,
+    },
+    data: {
+      status: "confirmed",
+    },
+  });
+  return result;
+};
 
 export const BookingService = {
   insertIntoDB,
   getAllFromDB,
   cancelBooking,
+  confirmBooking,
 };

@@ -8,6 +8,7 @@ import prisma from "../../../shared/prisma";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 
 const insertIntoDB = async (data: User) => {
+  console.log(data);
   if (data?.password) {
     const hashPassword = await bcrypt.hash(data.password, 10);
     data.password = hashPassword;
@@ -44,7 +45,7 @@ const userLogin = async (email: string, password: string) => {
   const passwordValidation = await bcrypt.compare(password, user.password);
 
   if (!passwordValidation) {
-    throw new Error("your  password is wrong");
+    throw new ApiError(httpStatus.FORBIDDEN, "your  password is wrong");
   }
 
   const accessToken = jwt.sign(
@@ -110,6 +111,7 @@ const updateProfile = async (
   user: JwtPayload | undefined,
   data: User
 ): Promise<User | undefined> => {
+  console.log(data);
   if (
     (user?.role == "user" && user?.id == id) ||
     user?.role == ENUM_USER_ROLE.ADMIN ||
@@ -140,14 +142,15 @@ const changePassword = async (id: string, password: any) => {
   );
 
   if (!passwordValidation) {
-    throw new Error("your  password is wrong");
+    throw new ApiError(httpStatus.FOUND, "your  password is wrong");
   }
+  const hashPassword = await bcrypt.hash(password.password, 10);
   const changePassword = await prisma.user.update({
     where: {
       id: id,
     },
     data: {
-      password: password.password,
+      password: hashPassword,
     },
   });
 

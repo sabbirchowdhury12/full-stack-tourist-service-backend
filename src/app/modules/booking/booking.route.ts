@@ -10,28 +10,23 @@ const router = express.Router();
 router.post(
   "/create-booking",
   validateRequest(BookingValidation.createZodSchema),
-  auth(ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   BookingController.insertToDB
 );
 router.get(
   "/",
-  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
+  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
   BookingController.getAllFromDB
 );
 router.patch(
   "/:id",
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
   BookingController.cancelBooking
 );
-// router.get(
-//   "/",
-//   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.CUSTOMER),
-//   BookingContoller.getAllFromDB
-// );
-// router.get(
-//   "/:orderId",
-//   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.CUSTOMER),
-//   BookingContoller.getSingleFromDB
-// );
+router.patch(
+  "/confirm-booking/:id",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  BookingController.confirmBooking
+);
 
 export const BookingRouter = router;

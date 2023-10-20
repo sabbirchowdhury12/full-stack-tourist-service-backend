@@ -20,7 +20,7 @@ const auth = (...requiredRoles) => (req, res, next) => __awaiter(void 0, void 0,
     try {
         const token = req.headers.authorization;
         if (!token) {
-            throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "You are not Authorized, send a token via 'authorization' in headers");
+            throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "You are not Authorized.");
         }
         const verifiedUser = jsonwebtoken_1.default.verify(token, config_1.default.jwt_secret_key);
         req.user = verifiedUser;

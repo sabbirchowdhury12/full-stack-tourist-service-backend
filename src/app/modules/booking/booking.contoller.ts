@@ -61,9 +61,29 @@ const cancelBooking = async (
     next(error);
   }
 };
+const confirmBooking = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params.id;
+    const result = await BookingService.confirmBooking(id);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Confirmed booking successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const BookingController = {
   insertToDB,
   getAllFromDB,
   cancelBooking,
+  confirmBooking,
 };

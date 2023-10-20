@@ -25,61 +25,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_1 = __importDefault(require("http-status"));
-const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const config_1 = __importDefault(require("../../../config"));
+const prisma_1 = __importDefault(require("../../../shared/prisma"));
+const user_1 = require("../../../enums/user");
 const insertIntoDB = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    if (data === null || data === void 0 ? void 0 : data.password) {
+        const hashPassword = yield bcrypt_1.default.hash(data.password, 10);
+        data.password = hashPassword;
+    }
     const result = yield prisma_1.default.user.create({
         data,
     });
+    const accessToken = jsonwebtoken_1.default.sign({
+        role: result.role,
+        id: result.id,
+    }, config_1.default.jwt_secret_key, { expiresIn: "365d" });
     const { password } = result, others = __rest(result, ["password"]);
-    return others;
-});
-const getAllFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.user.findMany({});
-    const usersWithoutPassword = result.map((user) => {
-        const { password } = user, others = __rest(user, ["password"]);
-        return others;
-    });
-    return usersWithoutPassword;
-});
-const getSingleFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.user.findUnique({
-        where: {
-            id,
-        },
-    });
-    if (!result) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "user not found");
-    }
-    const { password } = result, others = __rest(result, ["password"]);
-    return others;
-});
-const updateOneToDB = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.user.update({
-        where: {
-            id,
-        },
-        data,
-    });
-    if (!result) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "user not found");
-    }
-    const { password } = result, others = __rest(result, ["password"]);
-    return others;
-});
-const deleteOneFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.user.delete({
-        where: {
-            id,
-        },
-    });
-    if (!result) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "user not found");
-    }
-    const { password } = result, others = __rest(result, ["password"]);
-    return others;
+    return { user: others, accessToken };
 });
 const userLogin = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield prisma_1.default.user.findUnique({
@@ -88,25 +53,104 @@ const userLogin = (email, password) => __awaiter(void 0, void 0, void 0, functio
         },
     });
     if (!user) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "User not found");
+        throw new ApiError_1.default(404, "User not found");
     }
-    if (!user.password) {
-        throw new Error("user password is missing");
-    }
-    if (password != user.password) {
-        throw new Error(" password is wrong");
+    const passwordValidation = yield bcrypt_1.default.compare(password, user.password);
+    if (!passwordValidation) {
+        throw new ApiError_1.default(http_status_1.default.FORBIDDEN, "your  password is wrong");
     }
     const accessToken = jsonwebtoken_1.default.sign({
         role: user.role,
-        userId: user.id,
+        id: user.id,
     }, config_1.default.jwt_secret_key, { expiresIn: "365d" });
-    return accessToken;
+    const userWithoutPassword = Object.assign(Object.assign({}, user), { password: undefined });
+    return { user: userWithoutPassword, accessToken };
 });
-const getProfile = (userInfo) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = userInfo === null || userInfo === void 0 ? void 0 : userInfo.userId;
+const getAllUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    if ((user === null || user === void 0 ? void 0 : user.role) == "admin") {
+        const result = yield prisma_1.default.user.findMany({
+            where: {
+                role: "user",
+            },
+            orderBy: {
+                createdAt: "asc",
+            },
+        });
+        return result;
+    }
+    else {
+        const result = yield prisma_1.default.user.findMany({
+            where: {
+                role: {
+                    in: ["user", "admin"],
+                },
+            },
+            orderBy: {
+                createdAt: "asc",
+            },
+        });
+        return result;
+    }
+});
+const getProfile = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
+    if (user.role == "user" && user.id !== id) {
+        throw new ApiError_1.default(http_status_1.default.FORBIDDEN, "You have no access");
+    }
+    if ((user.role == "user" && user.id == id) ||
+        (user === null || user === void 0 ? void 0 : user.role) == user_1.ENUM_USER_ROLE.ADMIN ||
+        (user === null || user === void 0 ? void 0 : user.role) == user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
+        const result = yield prisma_1.default.user.findUnique({
+            where: {
+                id,
+            },
+        });
+        return result;
+    }
+    return null;
+});
+const updateProfile = (id, user, data) => __awaiter(void 0, void 0, void 0, function* () {
+    if (((user === null || user === void 0 ? void 0 : user.role) == "user" && (user === null || user === void 0 ? void 0 : user.id) == id) ||
+        (user === null || user === void 0 ? void 0 : user.role) == user_1.ENUM_USER_ROLE.ADMIN ||
+        (user === null || user === void 0 ? void 0 : user.role) == user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
+        const result = yield prisma_1.default.user.update({
+            where: {
+                id,
+            },
+            data,
+        });
+        return result;
+    }
+});
+const changePassword = (id, password) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.user.findUnique({
         where: {
+            id: id,
+        },
+    });
+    if (!result) {
+        throw new ApiError_1.default(http_status_1.default.NOT_ACCEPTABLE, "current password is wrong");
+    }
+    const passwordValidation = yield bcrypt_1.default.compare(password.currentPassword, result.password);
+    if (!passwordValidation) {
+        throw new Error("your  password is wrong");
+    }
+    const changePassword = yield prisma_1.default.user.update({
+        where: {
+            id: id,
+        },
+        data: {
+            password: password.password,
+        },
+    });
+    return changePassword;
+});
+const makeAdmin = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.user.update({
+        where: {
             id,
+        },
+        data: {
+            role: "admin",
         },
     });
     return result;
@@ -114,9 +158,9 @@ const getProfile = (userInfo) => __awaiter(void 0, void 0, void 0, function* () 
 exports.UserService = {
     insertIntoDB,
     userLogin,
-    getAllFromDB,
-    getSingleFromDB,
-    updateOneToDB,
-    deleteOneFromDB,
     getProfile,
+    updateProfile,
+    changePassword,
+    getAllUser,
+    makeAdmin,
 };

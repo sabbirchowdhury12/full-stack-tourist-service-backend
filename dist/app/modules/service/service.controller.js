@@ -12,18 +12,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserController = void 0;
+exports.ServiceController = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
-const user_service_1 = require("./user.service");
-const insertToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const service_service_1 = require("./service.service");
+const pick_1 = __importDefault(require("../../../shared/pick"));
+const getAllService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = req.body;
-        const result = yield user_service_1.UserService.insertIntoDB(user);
+        const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+        const filters = (0, pick_1.default)(req.query, ["minPrice", "maxPrice", "search"]);
+        const result = yield service_service_1.ServicesService.getAllService(filters, options);
         (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.OK,
             success: true,
-            message: "Users created successfully",
+            message: "Service fetched successfully",
+            meta: result.meta,
+            data: result.data,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+const insertIntoDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = req.body;
+        const result = yield service_service_1.ServicesService.insertIntoDB(data);
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.OK,
+            success: true,
+            message: "service created successfully",
             data: result,
         });
     }
@@ -31,45 +49,15 @@ const insertToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         next(error);
     }
 });
-const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { email, password } = req.body;
-        const result = yield user_service_1.UserService.userLogin(email, password);
-        (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.OK,
-            success: true,
-            message: "Login successfully!",
-            data: result,
-        });
-    }
-    catch (error) {
-        next(error);
-    }
-});
-const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = req.user;
-        const result = yield user_service_1.UserService.getAllUser(user);
-        (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.OK,
-            success: true,
-            message: "Users fetched successfully!",
-            data: result,
-        });
-    }
-    catch (error) {
-        next(error);
-    }
-});
-const getProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const updateService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const user = req.user;
-        const result = yield user_service_1.UserService.getProfile(id, user);
+        const serviceData = req.body;
+        const result = yield service_service_1.ServicesService.updateService(id, serviceData);
         (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.OK,
             success: true,
-            message: "Profile get successfully!",
+            message: "service updated successfully",
             data: result,
         });
     }
@@ -77,16 +65,14 @@ const getProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         next(error);
     }
 });
-const updateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const getSingleFromDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const user = req.user;
-        const userData = req.body;
-        const result = yield user_service_1.UserService.updateProfile(id, user, userData);
+        const result = yield service_service_1.ServicesService.getSingleFromDB(id);
         (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.OK,
             success: true,
-            message: "updated successfully!",
+            message: "service created successfully",
             data: result,
         });
     }
@@ -94,15 +80,14 @@ const updateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         next(error);
     }
 });
-const changePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteFromDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const password = req.body;
-        const result = yield user_service_1.UserService.changePassword(id, password);
+        const result = yield service_service_1.ServicesService.deleteFromDB(id);
         (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.OK,
             success: true,
-            message: "Password Changed successfully!",
+            message: "service deleted successfully",
             data: result,
         });
     }
@@ -110,14 +95,14 @@ const changePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         next(error);
     }
 });
-const makeAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const getAvailableService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const id = req.params.id;
-        const result = yield user_service_1.UserService.makeAdmin(id);
+        const { searchValue } = req.query;
+        const result = yield service_service_1.ServicesService.getAvailableService(searchValue);
         (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.OK,
             success: true,
-            message: "Make admin successfully",
+            message: "Availeable service fetched successfully",
             data: result,
         });
     }
@@ -125,12 +110,11 @@ const makeAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         next(error);
     }
 });
-exports.UserController = {
-    insertToDB,
-    userLogin,
-    getProfile,
-    updateProfile,
-    changePassword,
-    getAllUser,
-    makeAdmin,
+exports.ServiceController = {
+    getAllService,
+    insertIntoDB,
+    getSingleFromDB,
+    getAvailableService,
+    updateService,
+    deleteFromDB,
 };

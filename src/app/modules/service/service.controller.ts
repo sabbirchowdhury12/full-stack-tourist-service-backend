@@ -11,7 +11,7 @@ const getAllService = async (
 ) => {
   try {
     const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const filters = pick(req.query, ["minPrice", "maxPrice", "search"]);
+    const filters = pick(req.query, ["search", "minPrice", "maxPrice"]);
     const result = await ServicesService.getAllService(filters, options);
 
     sendResponse(res, {
@@ -111,6 +111,7 @@ const getAvailableService = async (
 ) => {
   try {
     const { searchValue } = req.query;
+    console.log(searchValue);
 
     const result = await ServicesService.getAvailableService(searchValue);
 

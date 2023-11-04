@@ -42,7 +42,7 @@ enum UserRole {
 model Service {
   id    String      @id  @default(uuid())
   service_name String
-  category ServiceCategory
+  category ServiceCategory @default(tour)
   location String
   price Int 
   image String
@@ -113,4 +113,13 @@ enum BookAndSheduleStatus {
   pending
   confirmed
   canceled
+}
+
+model FAQ {
+  id    String      @id  @default(uuid())
+  question String
+  answer   String
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+
 }

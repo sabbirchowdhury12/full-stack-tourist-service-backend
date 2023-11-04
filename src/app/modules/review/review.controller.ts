@@ -18,6 +18,24 @@ const insertToDB = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+const getAllReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = await ReviewService.getAllReview();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Review Fetched  successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const createRating = async (
   req: Request,
   res: Response,
@@ -41,4 +59,5 @@ const createRating = async (
 export const ReviewController = {
   insertToDB,
   createRating,
+  getAllReview,
 };

@@ -8,6 +8,7 @@ import { UserRouter } from "./app/modules/user/user.route";
 import { ServiceRouter } from "./app/modules/service/service.route";
 import { BookingRouter } from "./app/modules/booking/booking.route";
 import { ReviewRouter } from "./app/modules/review/review.route";
+import { FAQRouter } from "./app/modules/faq/faq.route";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/api/v1/service", ServiceRouter);
 app.use("/api/v1", UserRouter);
 app.use("/api/v1/booking", BookingRouter);
 app.use("/api/v1/review", ReviewRouter);
+app.use("/api/v1/faq", FAQRouter);
 
 app.use(globalErrorHandler);
 

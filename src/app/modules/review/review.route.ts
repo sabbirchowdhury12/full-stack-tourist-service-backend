@@ -14,6 +14,7 @@ router.post(
 
   ReviewController.insertToDB
 );
+router.get("/", ReviewController.getAllReview);
 router.post(
   "/create-rating",
   validateRequest(ReviewRatingValidation.createRatingZodSchema),

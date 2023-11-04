@@ -3,15 +3,16 @@ import prisma from "../../../shared/prisma";
 import { paginationHelpers } from "../../../helpers/paginationHelper";
 
 const getAllService = async (filters: any, options: any) => {
-  const { limit, page, skip, sortBy } =
+  const { limit, page, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(options);
 
   const { search, minPrice, maxPrice } = filters;
 
   const andConditions = [];
+
   if (search) {
     andConditions.push({
-      OR: ["service_name", "location", "category"].map((field) => ({
+      OR: ["service_name", "location"].map((field) => ({
         [field]: {
           contains: search,
           mode: "insensitive",
@@ -19,8 +20,8 @@ const getAllService = async (filters: any, options: any) => {
       })),
     });
   }
+
   if (minPrice !== undefined) {
-    console.log(minPrice);
     andConditions.push({
       price: {
         gte: parseInt(minPrice),
@@ -29,7 +30,6 @@ const getAllService = async (filters: any, options: any) => {
   }
 
   if (maxPrice !== undefined) {
-    console.log(minPrice);
     andConditions.push({
       price: {
         lte: parseInt(maxPrice),
@@ -40,21 +40,21 @@ const getAllService = async (filters: any, options: any) => {
   const whereConditions: Prisma.ServiceWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
 
-  console.log(whereConditions);
   const result = await prisma.service.findMany({
     where: whereConditions,
     skip,
     take: limit,
-    orderBy: sortBy
-      ? {
-          [sortBy]: "asc",
-        }
-      : {
-          id: "asc",
-        },
+    orderBy:
+      sortBy && sortOrder
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : {
+            createdAt: "asc",
+          },
   });
 
-  const total = await prisma.service.count({});
+  const total = await prisma.service.count();
   const size = result.length;
   const totalPage = Math.ceil(total / limit);
 
@@ -188,6 +188,7 @@ const getAvailableService = async (
           createdAt: "asc",
         },
       });
+      console.log(result);
 
       return result;
     } else {

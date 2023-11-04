@@ -10,6 +10,15 @@ const insertIntoDB = async (
 
   return result;
 };
+const getAllReview = async (): Promise<Review[]> => {
+  const result = await prisma.review.findMany({
+    include: {
+      user: true,
+      service: true,
+    },
+  });
+  return result;
+};
 const createRating = async (
   data: Prisma.RatingCreateInput
 ): Promise<Rating> => {
@@ -23,4 +32,5 @@ const createRating = async (
 export const ReviewService = {
   insertIntoDB,
   createRating,
+  getAllReview,
 };

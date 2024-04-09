@@ -146,7 +146,6 @@ const updateService = async (id: string, data: any): Promise<Service> => {
 };
 
 const insertIntoDB = async (data: Service): Promise<Service> => {
-  console.log(data);
   const result = await prisma.service.create({
     data,
   });
@@ -154,13 +153,12 @@ const insertIntoDB = async (data: Service): Promise<Service> => {
   return result;
 };
 const deleteFromDB = async (id: string): Promise<Service> => {
-  console.log(id);
   const result = await prisma.service.delete({
     where: {
       id,
     },
   });
-  console.log(result);
+
   return result;
 };
 const getAvailableService = async (
@@ -188,7 +186,6 @@ const getAvailableService = async (
           createdAt: "asc",
         },
       });
-      console.log(result);
 
       return result;
     } else {

@@ -31,6 +31,20 @@ const insertToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         next(error);
     }
 });
+const getAllReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield review_service_1.ReviewService.getAllReview();
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.OK,
+            success: true,
+            message: "Review Fetched  successfully",
+            data: result,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
 const createRating = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookingData = req.body;
@@ -49,4 +63,5 @@ const createRating = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
 exports.ReviewController = {
     insertToDB,
     createRating,
+    getAllReview,
 };

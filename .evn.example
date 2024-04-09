@@ -1,0 +1,7 @@
+NODE_ENV = production
+PORT = 5000
+JWT_SECRET_KEY = sabbbirCHowdhury
+Jwt_refresh_key = sabbbirCHowdhury
+
+DATABASE_URL = "postgresql://postgres:1234@localhost:5432/torist_service?schema=public"
+DATABASE_URL = "postgresql://postgres:FAsoyQaVpQGIeveFNPNGLJnifpYmqqIW@monorail.proxy.rlwy.net:30307/railway"

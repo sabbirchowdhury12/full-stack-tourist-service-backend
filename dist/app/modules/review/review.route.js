@@ -12,5 +12,6 @@ const validationRequest_ts_1 = __importDefault(require("../../middleware/validat
 const review_validation_1 = require("./review.validation");
 const router = express_1.default.Router();
 router.post("/create-review", (0, validationRequest_ts_1.default)(review_validation_1.ReviewRatingValidation.createReviewZodSchema), (0, auth_1.default)(user_1.ENUM_USER_ROLE.USER), review_controller_1.ReviewController.insertToDB);
+router.get("/", review_controller_1.ReviewController.getAllReview);
 router.post("/create-rating", (0, validationRequest_ts_1.default)(review_validation_1.ReviewRatingValidation.createRatingZodSchema), (0, auth_1.default)(user_1.ENUM_USER_ROLE.USER), review_controller_1.ReviewController.createRating);
 exports.ReviewRouter = router;

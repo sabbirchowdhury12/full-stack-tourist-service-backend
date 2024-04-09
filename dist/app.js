@@ -20,14 +20,16 @@ const user_route_1 = require("./app/modules/user/user.route");
 const service_route_1 = require("./app/modules/service/service.route");
 const booking_route_1 = require("./app/modules/booking/booking.route");
 const review_route_1 = require("./app/modules/review/review.route");
+const faq_route_1 = require("./app/modules/faq/faq.route");
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({ origin: "https://full-stack-tourist-service-frontend.vercel.app/" }));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use("/api/v1/service", service_route_1.ServiceRouter);
 app.use("/api/v1", user_route_1.UserRouter);
 app.use("/api/v1/booking", booking_route_1.BookingRouter);
 app.use("/api/v1/review", review_route_1.ReviewRouter);
+app.use("/api/v1/faq", faq_route_1.FAQRouter);
 app.use(globalErrorHandler_1.default);
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("Hello World!");

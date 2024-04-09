@@ -132,14 +132,15 @@ const changePassword = (id, password) => __awaiter(void 0, void 0, void 0, funct
     }
     const passwordValidation = yield bcrypt_1.default.compare(password.currentPassword, result.password);
     if (!passwordValidation) {
-        throw new Error("your  password is wrong");
+        throw new ApiError_1.default(http_status_1.default.FOUND, "your  password is wrong");
     }
+    const hashPassword = yield bcrypt_1.default.hash(password.password, 10);
     const changePassword = yield prisma_1.default.user.update({
         where: {
             id: id,
         },
         data: {
-            password: password.password,
+            password: hashPassword,
         },
     });
     return changePassword;

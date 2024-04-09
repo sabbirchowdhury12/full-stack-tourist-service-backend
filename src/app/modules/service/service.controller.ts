@@ -111,7 +111,7 @@ const getAvailableService = async (
 ) => {
   try {
     const { searchValue } = req.query;
-    console.log(searchValue);
+
 
     const result = await ServicesService.getAvailableService(searchValue);
 

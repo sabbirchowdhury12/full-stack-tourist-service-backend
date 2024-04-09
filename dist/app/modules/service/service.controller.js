@@ -20,7 +20,7 @@ const pick_1 = __importDefault(require("../../../shared/pick"));
 const getAllService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-        const filters = (0, pick_1.default)(req.query, ["minPrice", "maxPrice", "search"]);
+        const filters = (0, pick_1.default)(req.query, ["search", "minPrice", "maxPrice"]);
         const result = yield service_service_1.ServicesService.getAllService(filters, options);
         (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.OK,

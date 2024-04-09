@@ -12,7 +12,9 @@ import { FAQRouter } from "./app/modules/faq/faq.route";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({ origin: "https://full-stack-tourist-service-frontend.vercel.app" })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

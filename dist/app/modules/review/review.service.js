@@ -20,6 +20,15 @@ const insertIntoDB = (data) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return result;
 });
+const getAllReview = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.review.findMany({
+        include: {
+            user: true,
+            service: true,
+        },
+    });
+    return result;
+});
 const createRating = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.rating.create({
         data,
@@ -29,4 +38,5 @@ const createRating = (data) => __awaiter(void 0, void 0, void 0, function* () {
 exports.ReviewService = {
     insertIntoDB,
     createRating,
+    getAllReview,
 };

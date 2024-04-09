@@ -12,32 +12,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryService = void 0;
+exports.FAQService = void 0;
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const insertIntoDB = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(data);
-    const result = yield prisma_1.default.category.create({
+    const result = yield prisma_1.default.fAQ.create({
         data,
     });
     return result;
 });
 const getAllFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.category.findMany({});
+    const result = yield prisma_1.default.fAQ.findMany({});
     return result;
 });
 const getSingleFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.category.findUnique({
+    const result = yield prisma_1.default.fAQ.findUnique({
         where: {
             id,
-        },
-        include: {
-            books: true,
         },
     });
     return result;
 });
-const updateOneToDB = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.category.update({
+const updateOne = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.fAQ.update({
         where: {
             id,
         },
@@ -45,18 +41,18 @@ const updateOneToDB = (id, data) => __awaiter(void 0, void 0, void 0, function* 
     });
     return result;
 });
-const deleteOneFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.category.delete({
+const deleteOne = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.fAQ.delete({
         where: {
             id,
         },
     });
     return result;
 });
-exports.CategoryService = {
+exports.FAQService = {
     insertIntoDB,
     getAllFromDB,
+    updateOne,
+    deleteOne,
     getSingleFromDB,
-    updateOneToDB,
-    deleteOneFromDB,
 };

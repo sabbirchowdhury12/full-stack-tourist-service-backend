@@ -93,7 +93,7 @@ const getAllFromDB = (user, statusValue) => __awaiter(void 0, void 0, void 0, fu
                 },
             });
         }
-        else if (statusValue == "cancel" || statusValue == "active") {
+        else {
             result = yield prisma_1.default.bookAndShedule.findMany({
                 where: {
                     userId: user.id,

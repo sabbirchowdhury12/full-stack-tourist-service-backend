@@ -12,6 +12,7 @@ const insertIntoDB = async (data: User) => {
     const hashPassword = await bcrypt.hash(data.password, 10);
     data.password = hashPassword;
   }
+  console.log(data);
   const result = await prisma.user.create({
     data,
   });

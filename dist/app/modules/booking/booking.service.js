@@ -33,6 +33,7 @@ const getAllFromDB = (user, statusValue) => __awaiter(void 0, void 0, void 0, fu
                             name: true,
                             email: true,
                             image: true,
+                            role: true,
                         },
                     },
                     service: {

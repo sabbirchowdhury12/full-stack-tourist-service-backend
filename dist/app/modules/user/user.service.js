@@ -36,6 +36,7 @@ const insertIntoDB = (data) => __awaiter(void 0, void 0, void 0, function* () {
         const hashPassword = yield bcrypt_1.default.hash(data.password, 10);
         data.password = hashPassword;
     }
+    console.log(data);
     const result = yield prisma_1.default.user.create({
         data,
     });

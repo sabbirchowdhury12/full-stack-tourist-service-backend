@@ -13,7 +13,12 @@ import { FAQRouter } from "./app/modules/faq/faq.route";
 const app = express();
 
 app.use(
-  cors({ origin: "https://full-stack-tourist-service-frontend.vercel.app" })
+  cors({
+    origin: [
+      "https://full-stack-tourist-service-frontend.vercel.app",
+      "http://localhost:3000",
+    ],
+  })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
